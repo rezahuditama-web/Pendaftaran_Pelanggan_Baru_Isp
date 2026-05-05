@@ -20,7 +20,7 @@
             <label>Password:</label>
             <input type="password" name="password" placeholder="Masukkan password" required>
             
-            <button type="submit" name="login">Masuk</button>
+            <button type="submit" name="login">Masuk sini</button>
         </form>
     </div>
 </body>
