@@ -12,7 +12,7 @@
 </head>
 <body>
     <div class="card">
-        <h2>Login</h2>
+        <h2>Login Pelanggan</h2>
         <form action="" method="POST">
             <label>Username:</label>
             <input type="text" name="username" placeholder="Masukkan username" required>
