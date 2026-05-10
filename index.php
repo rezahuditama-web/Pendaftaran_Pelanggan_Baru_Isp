@@ -395,7 +395,7 @@
             <a href="#kontak">Hubungi Kami</a>
         </div>
 
-        <a href="#" class="btn-login">Login Admin</a>
+        <a href="loginadmin.php" class="btn-login">Login Admin</a>
     </nav>
 
 
@@ -415,7 +415,7 @@
             </p>
 
             <small>
-                *Jam kerja: 09.00 WIB – 17.00 WIB. <br>
+                Jam kerja: 09.00 WIB – 17.00 WIB. <br>
                 Pendaftaran malam akan dipasang besok pagi.
             </small>
 
@@ -427,7 +427,7 @@
 
         <div class="hero-image">
             <div class="circle">
-                <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" alt="Internet">
+                <img src="asset/inde.png">
             </div>
         </div>
     </section>
@@ -516,7 +516,7 @@
             </div>
 
             <div class="paket-image">
-                <img src="https://cdn-icons-png.flaticon.com/512/1055/1055687.png" alt="Basic">
+                <img src="asset/homepaket.svg">
             </div>
         </div>
     </section>
@@ -536,11 +536,11 @@
 
                 <h4>#Gratis Pemasangan — Internet Unlimited</h4>
 
-                <a href="daftar.php" class="btn-detail">Lihat Detail</a>
+                <a href="paketbisnis.php" class="btn-detail">Lihat Detail</a>
             </div>
 
             <div class="paket-image">
-                <img src="https://cdn-icons-png.flaticon.com/512/483/483356.png" alt="Premium">
+                <img src="asset/basic.svg">
             </div>
         </div>
     </section>
