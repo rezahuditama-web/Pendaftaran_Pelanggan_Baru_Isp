@@ -19,6 +19,8 @@
             font-family:'Poppins',sans-serif;
             background:#001b3b;
             color:white;
+
+                padding-top:90px;
         }
 
         a{
@@ -32,6 +34,15 @@
             display:flex;
             justify-content:space-between;
             align-items:center;
+
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+
+            z-index:1000;
+
+            box-shadow:0 2px 10px rgba(0,0,0,0.1);
         }
 
         .logo h2{
@@ -240,7 +251,7 @@
             <a href="#">Hubungi Kami</a>
         </div>
 
-        <a href="#" class="btn-login">Login Admin</a>
+        <a href="loginadmin.php" class="btn-login">Login Admin</a>
     </nav>
 
 
