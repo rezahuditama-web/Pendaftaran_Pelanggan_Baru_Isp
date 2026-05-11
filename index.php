@@ -420,7 +420,7 @@
             </small>
 
             <!-- Tombol menuju form pendaftaran -->
-            <a href="login_pelanggan.php" class="btn-daftar">
+            <a href="loginpelanggan.php" class="btn-daftar">
                 Daftar Sekarang!
             </a>
         </div>
