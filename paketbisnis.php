@@ -122,8 +122,8 @@
         }
 
         .speed-circle{
-            width:180px;
-            height:180px;
+            width:239px;
+            height:239px;
             border:3px solid #13b0ff;
             border-radius:50%;
             margin:auto;
@@ -136,17 +136,17 @@
         }
 
         .speed-circle h3{
-            font-size:18px;
+            font-size:18px; 
             color:#d0d0d0;
             margin-bottom:10px;
         }
 
         .speed-circle h1{
-            font-size:58px;
+            font-size:58px;  \\58
         }
 
         .speed-circle span{
-            font-size:22px;
+            font-size:22px;  \\22
         }
 
         .benefit{
@@ -320,7 +320,7 @@
                 Rp. <strong>229</strong>.000 /bulan
             </div>
 
-            <a href="login_pelanggan.php" class="btn-daftar">
+            <a href="loginpelanggan.php" class="btn-daftar">
                 Daftar Sekarang!
             </a>
 
@@ -347,7 +347,7 @@
                 Rp. <strong>329</strong>.000 /bulan
             </div>
 
-            <a href="login_pelanggan.php" class="btn-daftar">
+            <a href="loginpelanggan.php" class="btn-daftar">
                 Daftar Sekarang!
             </a>
 
@@ -374,7 +374,7 @@
                 Rp. <strong>419</strong>.000 /bulan
             </div>
 
-            <a href="login_pelanggan.php" class="btn-daftar">
+            <a href="loginpelanggan.php" class="btn-daftar">
                 Daftar Sekarang!
             </a>
 
@@ -401,7 +401,7 @@
                 Rp. <strong>579</strong>.000 /bulan
             </div>
 
-            <a href="login_pelanggan.php" class="btn-daftar">
+            <a href="loginpelanggan.php" class="btn-daftar">
                 Daftar Sekarang!
             </a>
 
