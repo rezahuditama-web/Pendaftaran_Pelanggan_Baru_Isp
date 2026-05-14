@@ -1,5 +1,6 @@
 <?php
 session_start();
+include "koneksi.php";
 
 $step = $_POST['step'] ?? 1;
 $errors = [];
@@ -13,6 +14,7 @@ if ($step == 1 && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $alamat  = trim($_POST['alamat'] ?? '');
     $email   = trim($_POST['email'] ?? '');
     $telepon = trim($_POST['telepon'] ?? '');
+    $password = trim($_POST['password'] ?? '');
 
     if (empty($nama))   $errors[] = "Nama Lengkap wajib diisi.";
     if (empty($nik) || !preg_match('/^\d{16}$/', $nik)) $errors[] = "Nomer NIK KTP harus 16 digit angka.";
@@ -20,9 +22,34 @@ if ($step == 1 && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Email tidak valid.";
     if (empty($telepon) || !preg_match('/^\d{10,13}$/', $telepon)) $errors[] = "No Telephone harus 10–13 digit.";
     if (!isset($_FILES['foto_ktp']) || $_FILES['foto_ktp']['error'] !== 0) $errors[] = "Foto KTP wajib diunggah.";
+    if (strlen($password) < 6) {
+    $errors[] = "Password minimal 6 karakter.";
+}
+ if (empty($errors)) {
 
-    if (empty($errors)) {
-        $_SESSION['data_diri'] = compact('nama','nik','alamat','email','telepon');
+        $folderUpload = "upload/";
+
+        if (!is_dir($folderUpload)) {
+            mkdir($folderUpload);
+        }
+
+        $namaFile = time() . "_" . $_FILES['foto_ktp']['name'];
+        $tmpFile  = $_FILES['foto_ktp']['tmp_name'];
+
+        $pathUpload = $folderUpload . $namaFile;
+
+        move_uploaded_file($tmpFile, $pathUpload);
+
+        $_SESSION['data_diri'] = [
+            'nama'      => $nama,
+            'nik'       => $nik,
+            'alamat'    => $alamat,
+            'email'     => $email,
+            'telepon'   => $telepon,
+            'password'  => $password,
+            'foto_ktp'  => $pathUpload
+        ];
+
         $step = 2;
     }
 }
@@ -31,23 +58,99 @@ if ($step == 1 && $_SERVER['REQUEST_METHOD'] === 'POST') {
 // PROSES STEP 2 - Pilih Paket
 // =====================
 $success = false;
-if ($step == 2 && isset($_POST['jenis_paket']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+
+if ($step == 2 && isset($_POST['jenis_paket'])) {
+
     $jenis_paket   = $_POST['jenis_paket'] ?? '';
     $paket_pilihan = $_POST['paket_pilihan'] ?? '';
 
-    if (empty($jenis_paket))   $errors[] = "Silakan pilih jenis paket.";
-    if (empty($paket_pilihan)) $errors[] = "Silakan pilih paket berlangganan.";
+    if (empty($jenis_paket)) {
+        $errors[] = "Pilih jenis paket.";
+    }
+
+    if (empty($paket_pilihan)) {
+        $errors[] = "Pilih paket internet.";
+    }
 
     if (empty($errors)) {
-        // Simpan ke database di sini:
-        // $conn = new mysqli("localhost","root","","gala_data");
-        // $data = $_SESSION['data_diri'];
-        // $paket_final = $jenis_paket . ' - ' . $paket_pilihan;
-        // $stmt = $conn->prepare("INSERT INTO pelanggan (nama,nik,alamat,email,telepon,paket) VALUES (?,?,?,?,?,?)");
-        // $stmt->bind_param("ssssss",$data['nama'],$data['nik'],$data['alamat'],$data['email'],$data['telepon'],$paket_final);
-        // $stmt->execute();
-        $success = true;
-        session_destroy();
+
+        $data = $_SESSION['data_diri'];
+
+        $nama      = $data['nama'];
+        $nik       = $data['nik'];
+        $alamat    = $data['alamat'];
+        $email     = $data['email'];
+        $telepon   = $data['telepon'];
+        $password  = $data['password'];
+        $foto_ktp  = $data['foto_ktp'];
+
+        $paket = $jenis_paket . " - " . $paket_pilihan;
+
+        mysqli_query($koneksi,
+
+        "INSERT INTO pelanggan
+        (
+            no_nik,
+            nama_pelanggan,
+            no_hp,
+            alamat_domisili,
+            foto_ktp,
+            password
+        )
+
+        VALUES
+        (
+            '$nik',
+            '$nama',
+            '$telepon',
+            '$alamat',
+            '$foto_ktp',
+            '$password'
+        )"
+
+        );
+
+        $id_pelanggan = mysqli_insert_id($koneksi);
+
+        /*
+        ID paket:
+        1 = Basic
+        2 = Premium
+        */
+
+        if($jenis_paket == "basic"){
+            $id_paket = 1;
+        }else{
+            $id_paket = 2;
+        }
+
+        $query2 = mysqli_query($koneksi,
+
+        "INSERT INTO pendaftaran_pemasangan
+        (
+            id_pelanggan,
+            id_admin,
+            id_paket,
+            status_verifikasi,
+            tanggal_penggajuan
+        )
+
+        VALUES
+        (
+            '$id_pelanggan',
+            NULL,
+            '$id_paket',
+            'Pending',
+            NOW()
+        )"
+);
+
+ if($query && $query2){
+    $success = true;
+    session_destroy();
+}else{
+    $errors[] = "Data gagal disimpan: " . mysqli_error($koneksi);
+}
     }
 }
 
@@ -305,13 +408,39 @@ $paket_premium = [
                 <input type="text" id="nik" name="nik" placeholder="No. KTP (16 digit)" maxlength="16"
                        value="<?= htmlspecialchars($_POST['nik'] ?? '') ?>"/>
             </div>
-            <div class="full">
-                <label>Foto KTP *</label>
-                <label for="foto_ktp" class="file-btn">Kirim</label>
-                <input type="file" id="foto_ktp" name="foto_ktp" accept="image/*,.pdf"
-                       onchange="document.getElementById('nama-file').textContent = this.files[0]?.name || ''"/>
-                <span class="file-name" id="nama-file">Belum ada file dipilih</span>
-            </div>
+
+<div>
+    <label for="password">Password *</label>
+
+    <input 
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Buat password login"
+        required
+    >
+</div>
+
+            <div>
+    <label>Foto KTP *</label>
+
+    <label for="foto_ktp" class="file-btn">
+        Kirim Gambar
+    </label>
+
+    <input 
+        type="file"
+        id="foto_ktp"
+        name="foto_ktp"
+        accept="image/*"
+        onchange="document.getElementById('nama-file').textContent = this.files[0]?.name || ''"
+    >
+
+    <span class="file-name" id="nama-file">
+        Belum ada file dipilih
+    </span>
+</div>
+            
             <div class="full">
                 <label for="alamat">Alamat *</label>
                 <textarea id="alamat" name="alamat" placeholder="Sesuai KTP/SIM/Pasport"><?= htmlspecialchars($_POST['alamat'] ?? '') ?></textarea>
