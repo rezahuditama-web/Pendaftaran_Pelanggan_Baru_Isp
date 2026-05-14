@@ -1,3 +1,37 @@
+<?php
+session_start();
+include 'koneksi.php';
+
+if(isset($_POST['username'])){
+
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    $query = mysqli_query(
+        $koneksi,
+        "SELECT * FROM admin 
+         WHERE username='$username' 
+         AND password='$password'"
+    );
+
+    $cek = mysqli_num_rows($query);
+
+    if($cek > 0){
+
+        $_SESSION['username'] = $username;
+
+        header("Location: dashboard.php");
+        exit;
+
+    } else {
+
+        echo "<script>
+                alert('Username atau Password salah!');
+              </script>";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -227,6 +261,7 @@
 
     </style>
 </head>
+
 <body>
 
 
