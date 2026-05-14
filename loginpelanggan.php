@@ -206,7 +206,7 @@ body{
                 Masuk Pelanggan
             </p>
 
-            <form action="isidatapelangganlama.php" method="POST">
+            <form action="proseslogin.php" method="POST">
 
                 <div class="input-box">
                     <label>Password</label>
@@ -230,9 +230,9 @@ body{
                     >
                 </div>
 
-                <button type="datayanglogin.php" class="btn-login">
-                    Login
-                </button>
+<button type="submit" class="btn-login">
+    Login
+</button>
 
             </form>
 
