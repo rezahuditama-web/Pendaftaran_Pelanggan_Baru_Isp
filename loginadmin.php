@@ -4,12 +4,11 @@ session_start();
 
 include 'koneksi.php';
 
-
 /* =========================================
    PROSES LOGIN
 ========================================= */
 
-if(isset($_POST['username'])){
+if (isset($_POST['username'])) {
 
     // Mengambil input dari form
     $username = mysqli_real_escape_string(
@@ -22,7 +21,6 @@ if(isset($_POST['username'])){
         $_POST['password']
     );
 
-
     // Query cek username dan password
     $query = mysqli_query(
 
@@ -34,28 +32,23 @@ if(isset($_POST['username'])){
 
     );
 
-
     // Menghitung jumlah data ditemukan
     $cek = mysqli_num_rows($query);
 
-
     // Jika login berhasil
-    if($cek > 0){
+    if ($cek > 0) {
 
         // Mengambil data admin
         $data = mysqli_fetch_assoc($query);
-
 
         // Menyimpan session
         $_SESSION['id_admin']   = $data['id_admin'];
         $_SESSION['username']   = $data['username'];
         $_SESSION['nama_admin'] = $data['nama_admin'];
 
-
         // Redirect ke dashboard
         header("Location: dashboard.php");
         exit;
-
 
     } else {
 
