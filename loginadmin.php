@@ -1,33 +1,71 @@
 <?php
+
 session_start();
+
 include 'koneksi.php';
+
+
+/* =========================================
+   PROSES LOGIN
+========================================= */
 
 if(isset($_POST['username'])){
 
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    $query = mysqli_query(
+    // Mengambil input dari form
+    $username = mysqli_real_escape_string(
         $koneksi,
-        "SELECT * FROM admin 
-         WHERE username='$username' 
-         AND password='$password'"
+        $_POST['username']
     );
 
+    $password = mysqli_real_escape_string(
+        $koneksi,
+        $_POST['password']
+    );
+
+
+    // Query cek username dan password
+    $query = mysqli_query(
+
+        $koneksi,
+
+        "SELECT * FROM admin
+        WHERE username='$username'
+        AND password='$password'"
+
+    );
+
+
+    // Menghitung jumlah data ditemukan
     $cek = mysqli_num_rows($query);
 
+
+    // Jika login berhasil
     if($cek > 0){
 
-        $_SESSION['username'] = $username;
+        // Mengambil data admin
+        $data = mysqli_fetch_assoc($query);
 
+
+        // Menyimpan session
+        $_SESSION['id_admin']   = $data['id_admin'];
+        $_SESSION['username']   = $data['username'];
+        $_SESSION['nama_admin'] = $data['nama_admin'];
+
+
+        // Redirect ke dashboard
         header("Location: dashboard.php");
         exit;
 
+
     } else {
 
-        echo "<script>
-                alert('Username atau Password salah!');
-              </script>";
+        // Jika login gagal
+        echo "
+        <script>
+            alert('Username atau Password salah!');
+        </script>
+        ";
+
     }
 }
 ?>
