@@ -28,44 +28,71 @@
         }
 
         /* NAVBAR */
-        .navbar{
-            background:white;
-            padding:20px 8%;
+    .navbar {
+            width: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h2 {
+            font-size: 24px;
+            color: #1a73e8;
+            font-weight: 800;
+        }
+
+        .logo span {
+            font-size: 10px;
+            color: #777;
+            display: block;
+        }
+        .logo-circle{
+            width:60px;
+            height:60px;
+            border-radius:50%;
+           
             display:flex;
-            justify-content:space-between;
+            justify-content:center;
             align-items:center;
 
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-
-            z-index:1000;
-
-            box-shadow:0 2px 10px rgba(0,0,0,0.1);
+            font-size:26px;
+            font-weight:700;
         }
 
-        .logo h2{
-            color:#1a73e8;
-            font-size:28px;
+        .nav-menu {
+            display: flex;
+            gap: 35px;
         }
 
-        .menu{
-            display:flex;
-            gap:30px;
+        .nav-menu a {
+            color: #111;
+            font-size: 15px;
+            font-weight: 600;
+            transition: .3s;
         }
 
-        .menu a{
-            color:#111;
-            font-weight:600;
+        .nav-menu a:hover {
+            color: #1a73e8;
         }
 
-        .btn-login{
-            background:linear-gradient(90deg,#1a73e8,#13b0ff);
-            color:white;
-            padding:12px 30px;
-            border-radius:8px;
-            font-weight:600;
+        .btn-login {
+            background: linear-gradient(90deg, #1a73e8, #13b0ff);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
         }
 
         /* HERO */
@@ -238,17 +265,23 @@
     </style>
 </head>
 <body>
-
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo">
-            <h2>GALA DATA</h2>
+            <div class="logo-circle">
+                    <img src="asset/logo ISP.svg" alt="Logo ISP" style="width: 60px; height: 60px;, margin-top: 100px;">
+                </div>
+            <div>
+                <h2>GALA DATA</h2>
+                <span>BEST SOLUTION FAST INTERNET</span>
+            </div>
         </div>
 
-        <div class="menu">
-            <a href="index.php">Home</a>
-            <a href="#">Paket Harga</a>
-            <a href="#">Bantuan</a>
-            <a href="#">Hubungi Kami</a>
+        <div class="nav-menu">
+            <a href="#">Home</a>
+            <a href="#paket">Paket Harga</a>
+            <a href="#bantuan">Bantuan</a>
+            <a href="#kontak">Hubungi Kami</a>
         </div>
 
         <a href="loginadmin.php" class="btn-login">Login Admin</a>
