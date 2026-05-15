@@ -9,23 +9,36 @@ $errors = [];
 // PROSES STEP 1 - Data Diri
 // =====================
 if ($step == 1 && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama    = trim($_POST['nama'] ?? '');
-    $nik     = trim($_POST['nik'] ?? '');
-    $alamat  = trim($_POST['alamat'] ?? '');
-    $email   = trim($_POST['email'] ?? '');
-    $telepon = trim($_POST['telepon'] ?? '');
-    $password = trim($_POST['password'] ?? '');
 
-    if (empty($nama))   $errors[] = "Nama Lengkap wajib diisi.";
-    if (empty($nik) || !preg_match('/^\d{16}$/', $nik)) $errors[] = "Nomer NIK KTP harus 16 digit angka.";
-    if (empty($alamat)) $errors[] = "Alamat wajib diisi.";
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Email tidak valid.";
-    if (empty($telepon) || !preg_match('/^\d{10,13}$/', $telepon)) $errors[] = "No Telephone harus 10–13 digit.";
-    if (!isset($_FILES['foto_ktp']) || $_FILES['foto_ktp']['error'] !== 0) $errors[] = "Foto KTP wajib diunggah.";
-    if (strlen($password) < 6) {
-    $errors[] = "Password minimal 6 karakter.";
-}
- if (empty($errors)) {
+    $nama      = trim($_POST['nama'] ?? '');
+    $nik       = trim($_POST['nik'] ?? '');
+    $alamat    = trim($_POST['alamat'] ?? '');
+    $email     = trim($_POST['email'] ?? '');
+    $telepon   = trim($_POST['telepon'] ?? '');
+    $password  = trim($_POST['password'] ?? '');
+
+    if (empty($nama))
+        $errors[] = "Nama Lengkap wajib diisi.";
+
+    if (empty($nik) || !preg_match('/^\d{16}$/', $nik))
+        $errors[] = "Nomer NIK KTP harus 16 digit angka.";
+
+    if (empty($alamat))
+        $errors[] = "Alamat wajib diisi.";
+
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL))
+        $errors[] = "Email tidak valid.";
+
+    if (empty($telepon) || !preg_match('/^\d{10,13}$/', $telepon))
+        $errors[] = "No Telephone harus 10–13 digit.";
+
+    if (!isset($_FILES['foto_ktp']) || $_FILES['foto_ktp']['error'] !== 0)
+        $errors[] = "Foto KTP wajib diunggah.";
+
+    if (strlen($password) < 6)
+        $errors[] = "Password minimal 6 karakter.";
+
+    if (empty($errors)) {
 
         $folderUpload = "upload/";
 
@@ -55,7 +68,7 @@ if ($step == 1 && $_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // =====================
-// PROSES STEP 2 - Pilih Paket
+// PROSES STEP 2 - PILIH PAKET
 // =====================
 $success = false;
 
@@ -84,88 +97,133 @@ if ($step == 2 && isset($_POST['jenis_paket'])) {
         $password  = $data['password'];
         $foto_ktp  = $data['foto_ktp'];
 
-        $paket = $jenis_paket . " - " . $paket_pilihan;
-
-        mysqli_query($koneksi,
-
-        "INSERT INTO pelanggan
-        (
-            no_nik,
-            nama_pelanggan,
-            no_hp,
-            alamat_domisili,
-            foto_ktp,
-            password
-        )
-
-        VALUES
-        (
-            '$nik',
-            '$nama',
-            '$telepon',
-            '$alamat',
-            '$foto_ktp',
-            '$password'
-        )"
-
-        );
-
-        $id_pelanggan = mysqli_insert_id($koneksi);
-
-        /*
-        ID paket:
-        1 = Basic
-        2 = Premium
-        */
+        // =====================
+        // CARI PAKET
+        // =====================
 
         if($jenis_paket == "basic"){
-            $id_paket = 1;
+
+            $queryPaket = mysqli_query(
+                $koneksi,
+                "SELECT * FROM paket
+                WHERE jenis_paket='Rumah'
+                AND nama_paket='$paket_pilihan'"
+            );
+
         }else{
-            $id_paket = 2;
+
+            $queryPaket = mysqli_query(
+                $koneksi,
+                "SELECT * FROM paket
+                WHERE jenis_paket='Bisnis'
+                AND nama_paket='$paket_pilihan'"
+            );
+
         }
 
-        $query2 = mysqli_query($koneksi,
+        $dataPaket = mysqli_fetch_assoc($queryPaket);
 
-        "INSERT INTO pendaftaran_pemasangan
-        (
-            id_pelanggan,
-            id_admin,
-            id_paket,
-            status_verifikasi,
-            tanggal_penggajuan
-        )
+        if (!$dataPaket) {
 
-        VALUES
-        (
-            '$id_pelanggan',
-            NULL,
-            '$id_paket',
-            'Pending',
-            NOW()
-        )"
+            $errors[] = "Paket tidak ditemukan.";
+
+        } else {
+
+            $id_paket = $dataPaket['id_paket'];
+
+            // =====================
+            // INSERT KE TABEL PELANGGAN
+            // =====================
+
+$query = mysqli_query($koneksi,
+
+"INSERT INTO pelanggan
+(
+    no_nik,
+    nama_pelanggan,
+    no_hp,
+    alamat_domisili,
+    foto_ktp,
+    password
+)
+
+VALUES
+(
+    '$nik',
+    '$nama',
+    '$telepon',
+    '$alamat',
+    '$foto_ktp',
+    '$password'
+)"
+
 );
 
- if($query && $query2){
-    $success = true;
-    session_destroy();
-}else{
-    $errors[] = "Data gagal disimpan: " . mysqli_error($koneksi);
+if(!$query){
+    die("Gagal insert pelanggan: " . mysqli_error($koneksi));
 }
+
+$id_pelanggan = mysqli_insert_id($koneksi);
+
+// echo $id_pelanggan;
+// exit;
+
+            // =====================
+            // INSERT KE TABEL PENDAFTARAN
+            // =====================
+
+            $query2 = mysqli_query($koneksi,
+
+            "INSERT INTO pendaftaran_pemasangan
+            (
+                id_pelanggan,
+                id_admin,
+                id_paket,
+                status_verifikasi,
+                tanggal_pengajuan
+            )
+
+            VALUES
+            (
+                '$id_pelanggan',
+                NULL,
+                '$id_paket',
+                'Pending',
+                NOW()
+            )"
+
+            );
+
+            // =====================
+            // CEK BERHASIL / GAGAL
+            // =====================
+
+            if ($query && $query2) {
+
+                $success = true;
+                session_destroy();
+
+            } else {
+
+                $errors[] = "Data gagal disimpan: " . mysqli_error($koneksi);
+
+            }
+        }
     }
 }
 
-// Data paket
+// =====================
+// DATA PAKET
+// =====================
+
 $paket_basic = [
-    "Regular Silver"   => "Rp. 99.000,-",
-    "Regular Gold"     => "Rp. 129.000,-",
-    "Regular Gamer"    => "Rp. 189.000,-",
-    "Regular Platinum" => "Rp. 229.000,-",
+    "Bronze" => "Rp. 150.000,-",
+    "Silver" => "Rp. 250.000,-",
+    "Gold" => "Rp. 400.000,-",
 ];
+
 $paket_premium = [
-    "Premium Bronze"   => "Rp. 229.000,-",
-    "Premium Gold"     => "Rp. 329.000,-",
-    "Premium Bisnis"   => "Rp. 419.000,-",
-    "Premium Platinum" => "Rp. 579.000,-",
+    "Platinum" => "Rp. 750.000,-",
 ];
 ?>
 <!DOCTYPE html>
