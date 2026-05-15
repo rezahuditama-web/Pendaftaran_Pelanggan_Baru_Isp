@@ -126,8 +126,7 @@ if (isset($_POST['username'])) {
             width:60px;
             height:60px;
             border-radius:50%;
-            background:#13b0ff;
-
+           
             display:flex;
             justify-content:center;
             align-items:center;
@@ -305,7 +304,7 @@ if (isset($_POST['username'])) {
             <div class="logo">
 
                 <div class="logo-circle">
-                    G
+                    <img src="asset/logo ISP.svg" alt="Logo ISP" style="width: 80px; height: 80px;, margin-top: 100px;">
                 </div>
 
                 <div class="logo-text">
