@@ -367,6 +367,72 @@
 
     </section>
 
+        <section class="paket-container">
+
+<?php
+
+session_start();
+include 'koneksi.php';
+
+$query = mysqli_query(
+    $koneksi,
+    "SELECT * FROM paket 
+     WHERE jenis_paket='home'"
+);
+
+while($data = mysqli_fetch_array($query)){
+
+?>
+
+    <div class="paket-card">
+
+        <div class="speed-circle">
+
+            <h3>
+                <?php echo $data['nama_paket']; ?>
+            </h3>
+
+            <h1>
+                <?php echo $data['kecepatan']; ?>
+            </h1>
+
+            <span>Mbps</span>
+
+        </div>
+
+        <ul class="benefit">
+
+            <li>WiFi Modem</li>
+            <li>Kuota Unlimited</li>
+            <li>Gratis Instalasi</li>
+
+        </ul>
+
+        <div class="harga">
+
+            Rp.
+            <strong>
+                <?php echo number_format($data['harga']/1000); ?>
+            </strong>.000 /bulan
+
+        </div>
+
+        <a href="loginpelanggan.php?id_paket=<?php echo $data['id_paket']; ?>" 
+           class="btn-daftar">
+
+            Daftar Sekarang!
+
+        </a>
+
+    </div>
+
+<?php
+}
+?>
+
+</section>
+    
+
 
     <div class="catatan">
         * Harga di atas sudah termasuk PPN 10%
