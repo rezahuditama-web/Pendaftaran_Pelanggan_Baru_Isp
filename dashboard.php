@@ -119,7 +119,7 @@ $total_monitoring = mysqli_num_rows(
 
         <div class="logo">
 
-            <img src="assets/logo.png" alt="">
+            <img src="asset/logo ISP.svg" alt="Logo ISP" style= ''>
 
             <h2>GALA DATA</h2>
 
@@ -131,37 +131,37 @@ $total_monitoring = mysqli_num_rows(
 
             <li class="active">
                 <i class="fa-solid fa-table-columns"></i>
-                Dashboard
+                <a href="dashboard.php">Dashboard</a>
             </li>
 
-            <li>
+            <li >
                 <i class="fa-solid fa-users"></i>
-                Pelanggan
+                <a href="pelanggan.php">Pelanggan</a>
             </li>
 
             <li>
                 <i class="fa-solid fa-user-plus"></i>
-                Pendaftaran Pemasangan
+                <a href="pendaftaran_pemasangan.php">Pendaftaran Pemasangan</a>
             </li>
 
             <li>
                 <i class="fa-solid fa-hammer"></i>
-                Pemasangan
+                <a href="pemasangan.php">Pemasangan</a>
             </li>
 
             <li>
                 <i class="fa-solid fa-clipboard-check"></i>
-                Monitoring
+                <a href="monitoring.php">Monitoring</a>
             </li>
 
             <li>
                 <i class="fa-solid fa-globe"></i>
-                Setting Paket
+                <a href="setting_paket.php">Setting Paket</a>
             </li>
 
             <li>
                 <i class="fa-solid fa-gear"></i>
-                Pengaturan
+                <a href="setting_user.php">Pengaturan</a>
             </li>
 
         </ul>
