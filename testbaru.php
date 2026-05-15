@@ -4,17 +4,41 @@ include "koneksi.php";
 
 $step = $_POST['step'] ?? 1;
 $errors = [];
+$success = false;
 
-/* =========================
-   STEP 1 - DATA DIRI
-========================= */
+// ==========================================
+// AMBIL DATA PAKET DARI DATABASE
+// ==========================================
 
-if ($step == 1 && $_SERVER['REQUEST_METHOD'] === 'POST') {
+$query_paket = mysqli_query($koneksi, "
+    SELECT * FROM paket
+    ORDER BY jenis_paket ASC, harga ASC
+");
+
+$paket_basic = [];
+$paket_premium = [];
+
+while ($row = mysqli_fetch_assoc($query_paket)) {
+
+    if ($row['jenis_paket'] == 'basic') {
+
+        $paket_basic[] = $row;
+
+    } else if ($row['jenis_paket'] == 'premium') {
+
+        $paket_premium[] = $row;
+    }
+}
+
+// ==========================================
+// STEP 1 - DATA DIRI
+// ==========================================
+
+if ($step == 1 && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $nama      = trim($_POST['nama'] ?? '');
     $nik       = trim($_POST['nik'] ?? '');
     $alamat    = trim($_POST['alamat'] ?? '');
-    $email     = trim($_POST['email'] ?? '');
     $telepon   = trim($_POST['telepon'] ?? '');
     $password  = trim($_POST['password'] ?? '');
 
@@ -23,19 +47,15 @@ if ($step == 1 && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($nik) || !preg_match('/^\d{16}$/', $nik)) {
-        $errors[] = "NIK harus 16 digit angka.";
+        $errors[] = "NIK harus 16 digit.";
     }
 
     if (empty($alamat)) {
         $errors[] = "Alamat wajib diisi.";
     }
 
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Email tidak valid.";
-    }
-
     if (empty($telepon) || !preg_match('/^\d{10,13}$/', $telepon)) {
-        $errors[] = "Nomor telepon harus 10-13 digit.";
+        $errors[] = "Nomor HP harus 10-13 digit.";
     }
 
     if (strlen($password) < 6) {
@@ -46,51 +66,63 @@ if ($step == 1 && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Foto KTP wajib diupload.";
     }
 
+    // ==========================================
+    // CEK NIK SUDAH ADA / BELUM
+    // ==========================================
+
+    $cek_nik = mysqli_query($koneksi, "
+        SELECT * FROM pelanggan
+        WHERE no_nik='$nik'
+    ");
+
+    if (mysqli_num_rows($cek_nik) > 0) {
+        $errors[] = "NIK sudah terdaftar.";
+    }
+
+    // ==========================================
+    // JIKA TIDAK ADA ERROR
+    // ==========================================
+
     if (empty($errors)) {
 
-        $folderUpload = "upload/";
+        $folder = "upload/";
 
-        if (!is_dir($folderUpload)) {
-            mkdir($folderUpload);
+        if (!is_dir($folder)) {
+            mkdir($folder);
         }
 
-        $namaFile = time() . "_" . $_FILES['foto_ktp']['name'];
-        $tmpFile  = $_FILES['foto_ktp']['tmp_name'];
+        $nama_file = time() . "_" . $_FILES['foto_ktp']['name'];
 
-        $pathUpload = $folderUpload . $namaFile;
+        $tmp = $_FILES['foto_ktp']['tmp_name'];
 
-        move_uploaded_file($tmpFile, $pathUpload);
+        $path = $folder . $nama_file;
+
+        move_uploaded_file($tmp, $path);
 
         $_SESSION['data_diri'] = [
-            'nama'      => $nama,
-            'nik'       => $nik,
-            'alamat'    => $alamat,
-            'email'     => $email,
-            'telepon'   => $telepon,
-            'password'  => $password,
-            'foto_ktp'  => $pathUpload
+
+            'nama'       => $nama,
+            'nik'        => $nik,
+            'alamat'     => $alamat,
+            'telepon'    => $telepon,
+            'password'   => $password,
+            'foto_ktp'   => $path
         ];
 
         $step = 2;
     }
 }
 
-/* =========================
-   STEP 2 - PILIH PAKET
-========================= */
+// ==========================================
+// STEP 2 - PILIH PAKET
+// ==========================================
 
-$success = false;
+if ($step == 2 && isset($_POST['id_paket'])) {
 
-if ($step == 2 && isset($_POST['jenis_paket'])) {
+    $id_paket = $_POST['id_paket'];
 
-    $jenis_paket   = $_POST['jenis_paket'] ?? '';
-    $paket_pilihan = $_POST['paket_pilihan'] ?? '';
+    if (empty($id_paket)) {
 
-    if (empty($jenis_paket)) {
-        $errors[] = "Pilih jenis paket.";
-    }
-
-    if (empty($paket_pilihan)) {
         $errors[] = "Pilih paket internet.";
     }
 
@@ -98,285 +130,378 @@ if ($step == 2 && isset($_POST['jenis_paket'])) {
 
         $data = $_SESSION['data_diri'];
 
-        $nama      = $data['nama'];
-        $nik       = $data['nik'];
-        $alamat    = $data['alamat'];
-        $email     = $data['email'];
-        $telepon   = $data['telepon'];
-        $password  = $data['password'];
-        $foto_ktp  = $data['foto_ktp'];
+        $nama       = $data['nama'];
+        $nik        = $data['nik'];
+        $alamat     = $data['alamat'];
+        $telepon    = $data['telepon'];
+        $password   = $data['password'];
+        $foto_ktp   = $data['foto_ktp'];
 
-        $paket = $jenis_paket . " - " . $paket_pilihan;
+        // ==========================================
+        // INSERT KE TABEL PELANGGAN
+        // ==========================================
 
-        mysqli_query($koneksi,
+        $query1 = mysqli_query($koneksi, "
 
-        "INSERT INTO pelanggan
-        (
-            nama_pelanggan,
-            nik,
-            alamat,
-            email,
-            telepon,
-            password,
-            foto_ktp,
-            paket
-        )
+            INSERT INTO pelanggan
+            (
+                no_nik,
+                nama_pelanggan,
+                no_hp,
+                alamat_domisili,
+                foto_ktp,
+                password
+            )
 
-        VALUES
-        (
-            '$nama',
-            '$nik',
-            '$alamat',
-            '$email',
-            '$telepon',
-            '$password',
-            '$foto_ktp',
-            '$paket'
-        )"
+            VALUES
+            (
+                '$nik',
+                '$nama',
+                '$telepon',
+                '$alamat',
+                '$foto_ktp',
+                '$password'
+            )
 
-        );
+        ");
 
-        $success = true;
+        // AMBIL ID PELANGGAN TERBARU
+        $id_pelanggan = mysqli_insert_id($koneksi);
 
-        session_destroy();
+        // ==========================================
+        // INSERT KE TABEL PENDAFTARAN
+        // ==========================================
+
+        $query2 = mysqli_query($koneksi, "
+
+            INSERT INTO pendaftaran_pemasangan
+            (
+                id_pelanggan,
+                id_admin,
+                id_paket,
+                status_verifikasi,
+                tanggal_pengajuan
+            )
+
+            VALUES
+            (
+                '$id_pelanggan',
+                NULL,
+                '$id_paket',
+                'pending',
+                CURDATE()
+            )
+
+        ");
+
+        if ($query1 && $query2) {
+
+            $success = true;
+
+            session_destroy();
+
+        } else {
+
+            $errors[] = "Data gagal disimpan : " . mysqli_error($koneksi);
+        }
     }
 }
-
-/* =========================
-   DATA PAKET
-========================= */
-
-$paket_basic = [
-    "Regular Silver"   => "Rp. 99.000,-",
-    "Regular Gold"     => "Rp. 129.000,-",
-    "Regular Gamer"    => "Rp. 189.000,-",
-    "Regular Platinum" => "Rp. 229.000,-",
-];
-
-$paket_premium = [
-    "Premium Bronze"   => "Rp. 229.000,-",
-    "Premium Gold"     => "Rp. 329.000,-",
-    "Premium Bisnis"   => "Rp. 419.000,-",
-    "Premium Platinum" => "Rp. 579.000,-",
-];
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Daftar Pelanggan – Gala Data</title>
 
-<title>Daftar Pelanggan - Gala Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
 
-<style>
+        *, *::before, *::after{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+        }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+        body{
+            font-family:'Nunito',sans-serif;
+            background:#0d1b2e;
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:24px;
+        }
 
-body{
-    font-family:'Nunito',sans-serif;
-    background:#0d1b2e;
-    min-height:100vh;
+        .outer{
+            background:linear-gradient(145deg,#0f2544 0%,#0a1628 100%);
+            border-radius:20px;
+            padding:32px;
+            width:100%;
+            max-width:860px;
+            box-shadow:0 30px 80px rgba(0,0,0,.6);
+        }
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+        .card{
+            background:#f4f6fb;
+            border-radius:16px;
+            padding:36px 40px 32px;
+            position:relative;
+        }
 
-    padding:24px;
-}
+        .btn-back{
+            position:absolute;
+            top:28px;
+            left:28px;
+            background:none;
+            border:none;
+            cursor:pointer;
+            color:#1a73e8;
+            font-size:22px;
+        }
 
-.outer{
-    width:100%;
-    max-width:900px;
+        .logo-wrap{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            margin-bottom:28px;
+        }
 
-    background:white;
+        .logo-text strong{
+            display:block;
+            font-size:22px;
+            font-weight:800;
+            color:#1a73e8;
+        }
 
-    border-radius:20px;
+        .logo-text span{
+            font-size:10px;
+            color:#888;
+            letter-spacing:1.5px;
+            text-transform:uppercase;
+        }
 
-    padding:40px;
-}
+        .steps{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin-bottom:8px;
+        }
 
-.form-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-}
+        .step-wrap{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+        }
 
-.full{
-    grid-column:1 / -1;
-}
+        .step-circle{
+            width:52px;
+            height:52px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:20px;
+            font-weight:700;
+        }
 
-label{
-    display:block;
-    margin-bottom:8px;
+        .step-circle.active{
+            background:#1a73e8;
+            color:#fff;
+        }
 
-    color:#1a73e8;
-    font-weight:700;
-}
+        .step-circle.pending{
+            background:#fff;
+            color:#aab4c8;
+            border:2px solid #d0d9ec;
+        }
 
-input,
-textarea{
-    width:100%;
+        .step-line{
+            flex:1;
+            height:3px;
+            max-width:140px;
+            background:#d0d9ec;
+        }
 
-    padding:12px;
+        .step-line.active-line{
+            background:#1a73e8;
+        }
 
-    border:1px solid #ccc;
-    border-radius:10px;
+        .alert{
+            border-radius:10px;
+            padding:12px 16px;
+            font-size:13px;
+            font-weight:600;
+            margin-bottom:20px;
+        }
 
-    outline:none;
-}
+        .alert-error{
+            background:#fde8e8;
+            color:#c0392b;
+        }
 
-textarea{
-    resize:none;
-    height:100px;
-}
+        .alert-success{
+            background:#e8f5e9;
+            color:#2e7d32;
+        }
 
-input:focus,
-textarea:focus{
-    border-color:#1a73e8;
-}
+        .form-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:18px 24px;
+        }
 
-.file-btn{
-    display:inline-block;
+        .full{
+            grid-column:1 / -1;
+        }
 
-    background:#1a73e8;
-    color:white;
+        label{
+            display:block;
+            font-size:13px;
+            font-weight:700;
+            color:#1a73e8;
+            margin-bottom:6px;
+        }
 
-    padding:12px 20px;
+        input[type="text"],
+        input[type="password"],
+        input[type="tel"],
+        textarea{
+            width:100%;
+            background:#fff;
+            border:1.5px solid #dde3f0;
+            border-radius:10px;
+            padding:12px 14px;
+            font-size:14px;
+            outline:none;
+        }
 
-    border-radius:10px;
+        textarea{
+            resize:vertical;
+            min-height:90px;
+        }
 
-    cursor:pointer;
+        .file-btn{
+            display:inline-block;
+            background:#1a73e8;
+            color:#fff;
+            padding:10px 24px;
+            border-radius:10px;
+            cursor:pointer;
+        }
 
-    font-weight:700;
-}
+        input[type="file"]{
+            display:none;
+        }
 
-input[type="file"]{
-    display:none;
-}
+        .file-name{
+            display:inline-block;
+            margin-left:10px;
+            font-size:12px;
+            color:#666;
+        }
 
-.file-name{
-    display:block;
-    margin-top:10px;
+        .paket-buttons{
+            display:flex;
+            gap:20px;
+            justify-content:center;
+            margin:24px 0 8px;
+            flex-wrap:wrap;
+        }
 
-    font-size:13px;
-    color:#666;
-}
+        .btn-paket{
+            padding:16px 40px;
+            border-radius:12px;
+            font-size:16px;
+            font-weight:800;
+            cursor:pointer;
+            border:2px solid #1a73e8;
+            background:#fff;
+            color:#1a73e8;
+        }
 
-.btn-lanjut{
-    margin-top:30px;
+        .btn-paket.active{
+            background:#1a73e8;
+            color:#fff;
+        }
 
-    background:#1a73e8;
-    color:white;
+        .paket-list{
+            margin-top:24px;
+            display:none;
+        }
 
-    border:none;
-    border-radius:10px;
+        .paket-list.show{
+            display:block;
+        }
 
-    padding:14px 30px;
+        .paket-item{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:10px 4px;
+            border-bottom:1px solid #e8edf5;
+        }
 
-    font-size:16px;
-    font-weight:700;
+        .harga{
+            font-weight:700;
+        }
 
-    cursor:pointer;
-}
+        .form-footer{
+            display:flex;
+            justify-content:space-between;
+            margin-top:24px;
+        }
 
-.btn-lanjut:hover{
-    background:#0d5bc7;
-}
+        .btn-lanjut{
+            background:#1a73e8;
+            color:#fff;
+            padding:12px 36px;
+            border:none;
+            border-radius:12px;
+            cursor:pointer;
+            font-weight:800;
+        }
 
-.alert{
-    margin-bottom:20px;
-
-    background:#fde8e8;
-    color:#c0392b;
-
-    padding:15px;
-
-    border-radius:10px;
-}
-
-.success{
-    background:#e8f5e9;
-    color:#2e7d32;
-}
-
-.paket-buttons{
-    display:flex;
-    gap:20px;
-
-    justify-content:center;
-
-    margin-top:30px;
-}
-
-.btn-paket{
-    padding:16px 30px;
-
-    border:2px solid #1a73e8;
-    border-radius:12px;
-
-    background:white;
-    color:#1a73e8;
-
-    cursor:pointer;
-
-    font-weight:700;
-}
-
-.btn-paket.selected{
-    background:#1a73e8;
-    color:white;
-}
-
-.paket-list{
-    margin-top:30px;
-}
-
-.paket-item{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:12px 0;
-
-    border-bottom:1px solid #ddd;
-}
-
-</style>
+    </style>
 </head>
 
 <body>
 
 <div class="outer">
+<div class="card">
 
-<?php if ($success): ?>
+<?php if($success): ?>
 
-<div class="alert success">
-    Pendaftaran berhasil dan data sudah masuk database.
-</div>
-
-<?php else: ?>
-
-<?php if (!empty($errors)): ?>
-
-<div class="alert">
-    <ul>
-        <?php foreach($errors as $e): ?>
-            <li><?= $e ?></li>
-        <?php endforeach; ?>
-    </ul>
+<div class="alert alert-success">
+    Pendaftaran berhasil dilakukan.
 </div>
 
 <?php endif; ?>
 
-<?php if ($step == 1): ?>
+<?php if(!empty($errors)): ?>
+
+<div class="alert alert-error">
+
+<ul>
+
+<?php foreach($errors as $e): ?>
+
+<li><?= $e; ?></li>
+
+<?php endforeach; ?>
+
+</ul>
+
+</div>
+
+<?php endif; ?>
+
+<?php if(!$success): ?>
+
+<?php if($step == 1): ?>
 
 <form method="POST" enctype="multipart/form-data">
 
@@ -384,140 +509,124 @@ input[type="file"]{
 
 <div class="form-grid">
 
-    <div>
-        <label>Nama Lengkap *</label>
+<div>
+<label>Nama Lengkap *</label>
 
-        <input 
-            type="text"
-            name="nama"
-            placeholder="Nama Lengkap"
-            required
-        >
-    </div>
+<input type="text" name="nama">
+</div>
 
-    <div>
-        <label>NIK *</label>
+<div>
+<label>NIK *</label>
 
-        <input 
-            type="text"
-            name="nik"
-            maxlength="16"
-            placeholder="16 digit NIK"
-            required
-        >
-    </div>
+<input type="text" name="nik" maxlength="16">
+</div>
 
-    <div class="full">
-        <label>Alamat *</label>
+<div>
+<label>Password *</label>
 
-        <textarea 
-            name="alamat"
-            placeholder="Alamat lengkap"
-            required
-        ></textarea>
-    </div>
+<input type="password" name="password">
+</div>
 
-    <div>
-        <label>Email *</label>
+<div>
+<label>Foto KTP *</label>
 
-        <input 
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-        >
-    </div>
+<label for="foto_ktp" class="file-btn">
+Upload
+</label>
 
-    <div>
-        <label>No Telephone *</label>
+<input
+type="file"
+id="foto_ktp"
+name="foto_ktp"
+accept="image/*"
+onchange="document.getElementById('nama-file').textContent=this.files[0]?.name || ''"
+>
 
-        <input 
-            type="text"
-            name="telepon"
-            placeholder="No Telephone"
-            required
-        >
-    </div>
-
-    <div>
-        <label>Password *</label>
-
-        <input 
-            type="password"
-            name="password"
-            placeholder="Buat Password"
-            required
-        >
-    </div>
-
-    <div>
-        <label>Foto KTP *</label>
-
-        <label for="foto_ktp" class="file-btn">
-            Kirim Gambar
-        </label>
-
-        <input 
-            type="file"
-            id="foto_ktp"
-            name="foto_ktp"
-            accept="image/*"
-            onchange="document.getElementById('nama-file').textContent = this.files[0]?.name || ''"
-        >
-
-        <span class="file-name" id="nama-file">
-            Belum ada file dipilih
-        </span>
-    </div>
+<span class="file-name" id="nama-file">
+Belum ada file
+</span>
 
 </div>
 
+<div class="full">
+
+<label>Alamat *</label>
+
+<textarea name="alamat"></textarea>
+
+</div>
+
+<div class="full">
+
+<label>No HP *</label>
+
+<input type="tel" name="telepon">
+
+</div>
+
+</div>
+
+<div class="form-footer">
+
+<span>* wajib diisi</span>
+
 <button type="submit" class="btn-lanjut">
-    Lanjut
+Lanjut
 </button>
+
+</div>
 
 </form>
 
-<?php elseif ($step == 2): ?>
+<?php endif; ?>
+
+<?php if($step == 2): ?>
 
 <form method="POST">
 
 <input type="hidden" name="step" value="2">
 
-<input type="hidden" name="jenis_paket" id="jenis_paket">
-
 <div class="paket-buttons">
 
-<button 
-    type="button"
-    class="btn-paket"
-    onclick="pilihJenis('basic',this)"
+<button
+type="button"
+class="btn-paket"
+onclick="pilihJenis('basic')"
 >
-    Wifi Basic Home
+Wifi Basic Home
 </button>
 
-<button 
-    type="button"
-    class="btn-paket"
-    onclick="pilihJenis('premium',this)"
+<button
+type="button"
+class="btn-paket"
+onclick="pilihJenis('premium')"
 >
-    Wifi Premium Bisnis
+Wifi Premium Bisnis
 </button>
 
 </div>
 
-<div class="paket-list" id="list-basic" style="display:none;">
+<div class="paket-list" id="list-basic">
 
-<?php foreach($paket_basic as $nama => $harga): ?>
+<?php foreach($paket_basic as $p): ?>
 
 <div class="paket-item">
 
 <label>
-<input type="radio" name="paket_pilihan" value="<?= $nama ?>">
-<?= $nama ?>
+
+<input
+type="radio"
+name="id_paket"
+value="<?= $p['id_paket']; ?>"
+>
+
+<?= $p['nama_paket']; ?>
+
 </label>
 
-<span><?= $harga ?></span>
+<span class="harga">
+Rp <?= number_format($p['harga']); ?>
+</span>
 
 </div>
 
@@ -525,28 +634,43 @@ input[type="file"]{
 
 </div>
 
-<div class="paket-list" id="list-premium" style="display:none;">
+<div class="paket-list" id="list-premium">
 
-<?php foreach($paket_premium as $nama => $harga): ?>
+<?php foreach($paket_premium as $p): ?>
 
 <div class="paket-item">
 
 <label>
-<input type="radio" name="paket_pilihan" value="<?= $nama ?>">
-<?= $nama ?>
+
+<input
+type="radio"
+name="id_paket"
+value="<?= $p['id_paket']; ?>"
+>
+
+<?= $p['nama_paket']; ?>
+
 </label>
 
-<span><?= $harga ?></span>
+<span class="harga">
+Rp <?= number_format($p['harga']); ?>
+</span>
 
 </div>
 
 <?php endforeach; ?>
 
 </div>
+
+<div class="form-footer">
+
+<span>* pilih paket</span>
 
 <button type="submit" class="btn-lanjut">
-    Daftar Sekarang
+Daftar
 </button>
+
+</div>
 
 </form>
 
@@ -555,23 +679,16 @@ input[type="file"]{
 <?php endif; ?>
 
 </div>
+</div>
 
 <script>
 
-function pilihJenis(jenis,el){
+function pilihJenis(jenis){
 
-    document.getElementById('jenis_paket').value = jenis;
+    document.getElementById('list-basic').classList.remove('show');
+    document.getElementById('list-premium').classList.remove('show');
 
-    document.querySelectorAll('.btn-paket').forEach(btn=>{
-        btn.classList.remove('selected');
-    });
-
-    el.classList.add('selected');
-
-    document.getElementById('list-basic').style.display='none';
-    document.getElementById('list-premium').style.display='none';
-
-    document.getElementById('list-'+jenis).style.display='block';
+    document.getElementById('list-' + jenis).classList.add('show');
 }
 
 </script>
