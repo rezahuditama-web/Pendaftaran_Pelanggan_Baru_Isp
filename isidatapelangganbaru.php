@@ -217,13 +217,19 @@ $id_pelanggan = mysqli_insert_id($koneksi);
 // =====================
 
 $paket_basic = [
-    "Bronze" => "Rp. 150.000,-",
-    "Silver" => "Rp. 250.000,-",
-    "Gold" => "Rp. 400.000,-",
+    "Reguler Silver" => "Rp. 99.000,-",
+    "Reguler Gold" => "Rp. 129.000,-",
+    "Reguler Gamer" => "Rp. 189.000,-",
+    "Reguler Platinum" => "Rp. 229.000,-",
+    // "Gold" => "Rp. 400.000,-",
 ];
 
 $paket_premium = [
-    "Platinum" => "Rp. 750.000,-",
+    "Premium Silver" => "Rp. 229.000,-",
+    "Premium Gold" => "Rp. 329.000,-",
+    "Premium Bisnis" => "Rp. 419.000,-",
+    "Premium Platinum" => "Rp. 579.000,-",
+    // "Platinum" => "Rp. 750.000,-",
 ];
 ?>
 <!DOCTYPE html>
