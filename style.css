@@ -96,6 +96,7 @@ body{
     background:white;
     padding:10px 15px;
     border-radius:30px;
+    margin-left: auto;
 }
 
 .search-box input{
@@ -114,14 +115,15 @@ body{
 }
 
 .card{
-    background:white;
-    width:220px;
-    padding:20px;
-    border-radius:20px;
-    display:flex;
-    align-items:center;
-    gap:20px;
-    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+   background: white;
+    width: 100%;           
+    max-width: 720px;     
+    padding: 20px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .icon{
@@ -138,7 +140,8 @@ body{
 
 .card h3{
     color:#0080ff;
-    font-size:18px;
+    font-size:17px !important;
+    
 }
 
 .dashboard-box{
