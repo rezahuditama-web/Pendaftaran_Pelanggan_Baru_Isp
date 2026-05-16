@@ -108,6 +108,7 @@ $total_monitoring = mysqli_num_rows(
 
     <script src="https://kit.fontawesome.com/4ad0d5a3b2.js" crossorigin="anonymous"></script>
 
+
 </head>
 
 <body>
