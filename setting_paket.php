@@ -334,7 +334,7 @@ $query = mysqli_query($koneksi,"
                             <span class="badge-premium">Bisnis</span>
                         <?php endif; ?>
                     </td>
-                    <td><?= htmlspecialchars($row['kecepatan']); ?> Mbps</td>
+                    <td><?= htmlspecialchars($row['kecepatan']); ?></td>
                     <td class="harga-text">Rp <?= number_format($row['harga'], 0, ',', '.'); ?>,-</td>
                     <td>
                         <button class="btn-edit"
