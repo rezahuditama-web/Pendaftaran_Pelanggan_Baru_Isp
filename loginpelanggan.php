@@ -1,4 +1,40 @@
-<!DOCTYPE html>
+
+<?php
+session_start();
+
+// Kalau sudah login, langsung ke form pendaftaran
+if (isset($_SESSION['id_pelanggan'])) {
+    header("Location: daftar_pemasangan.php");
+    exit;
+}
+
+include 'koneksi.php';
+
+$error = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $no_nik  = mysqli_real_escape_string($koneksi, trim($_POST['no_nik']));
+    $password = md5(trim($_POST['password'])); // MD5 — sesuaikan jika pakai plain text
+
+    if (empty($no_nik) || empty($_POST['password'])) {
+        $error = "No NIK dan password wajib diisi.";
+    } else {
+        $cek = mysqli_fetch_assoc(mysqli_query($koneksi,
+            "SELECT * FROM pelanggan WHERE no_nik = '$no_nik' AND password = '$password'"
+        ));
+
+        if ($cek) {
+            $_SESSION['id_pelanggan']   = $cek['id_pelanggan'];
+            $_SESSION['nama_pelanggan'] = $cek['nama_pelanggan'];
+            $_SESSION['no_nik']         = $cek['no_nik'];
+            header("Location: daftar_pemasangan.php");
+            exit;
+        } else {
+            $error = "No NIK atau password salah.";
+        }
+    }
+}
+?><!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
