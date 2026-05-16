@@ -76,13 +76,11 @@ if(isset($_POST['verifikasi'])){
 
     $id_pendaftaran = $_POST['id_pendaftaran'];
     $status         = $_POST['status_verifikasi'];
-    $catatan        = $_POST['catatan_admin'];
 
     $query = mysqli_query($koneksi,"
     UPDATE pendaftaran_pemasangan
     SET 
         status_verifikasi='$status',
-        catatan_admin='$catatan'
     WHERE id_pendaftaran='$id_pendaftaran'
     ");
 
