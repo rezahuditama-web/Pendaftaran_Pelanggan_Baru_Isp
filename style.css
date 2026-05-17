@@ -78,33 +78,52 @@ body{
     align-items:center;
 }
 
+.top-left{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    flex-wrap:nowrap;
+}
+
 .dashboard-btn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
     border:none;
     padding:10px 20px;
     border-radius:10px;
     background:white;
     cursor:pointer;
-}
 
-.top-right{
-    display:flex;
-    align-items:center;
-    gap:20px;
+    white-space:nowrap;
 }
 
 .search-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
     background:white;
     padding:10px 15px;
     border-radius:30px;
-    margin-left: auto;
+
+    width:250px;
+    min-width:250px;
 }
 
+.search-form{
+    margin:0;
+}
 .search-box input{
     border:none;
     outline:none;
+    width:100%;
+    background:transparent;
 }
-
 .profile img{
+    width:40px;
+    height:40px;
     border-radius:50%;
 }
 

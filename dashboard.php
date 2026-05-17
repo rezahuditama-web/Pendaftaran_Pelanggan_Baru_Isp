@@ -91,8 +91,34 @@ $total_monitoring = mysqli_num_rows(
 
 ?>
 
+<?php
+
+$queryChart = mysqli_query($koneksi, "
+SELECT 
+    paket.nama_paket,
+    COUNT(pendaftaran_pemasangan.id_paket) AS total
+FROM pendaftaran_pemasangan
+JOIN paket 
+ON pendaftaran_pemasangan.id_paket = paket.id_paket
+GROUP BY paket.id_paket
+ORDER BY total DESC
+");
+
+$label_paket = [];
+$data_paket = [];
+
+while($row = mysqli_fetch_assoc($queryChart)) {
+
+    $label_paket[] = $row['nama_paket'];
+    $data_paket[] = $row['total'];
+
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="id">
+
 
 <head>
 
@@ -108,11 +134,12 @@ $total_monitoring = mysqli_num_rows(
 
     <script src="https://kit.fontawesome.com/4ad0d5a3b2.js" crossorigin="anonymous"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 </head>
 
 <body>
-
 <div class="container">
 
     <!-- SIDEBAR -->
@@ -184,36 +211,35 @@ $total_monitoring = mysqli_num_rows(
 
 
         <!-- TOPBAR -->
-        <div class="topbar">
+     <div class="topbar">
 
-            <button class="dashboard-btn">
+    <div class="top-left">
 
-                <i class="fa-solid fa-table-columns"></i>
+        <button class="dashboard-btn">
 
-                Dashboard
+            <i class="fa-solid fa-table-columns"></i>
 
-            </button>
+            Dashboard
 
-            <div class="top-right">
+        </button>
 
-                <div class="search-box">
+        <div class="search-box">
 
-                    <i class="fa-solid fa-magnifying-glass"></i>
+            <i class="fa-solid fa-magnifying-glass"></i>
 
-                    <input type="text" placeholder="Cari Pelanggan">
-
-                </div>
-
-                <div class="profile">
-
-                    <img src="https://i.pravatar.cc/40" alt="">
-
-                </div>
-
-            </div>
+            <input type="text" placeholder="Cari Pelanggan">
 
         </div>
 
+    </div>
+
+    <div class="profile">
+
+        <img src="https://i.pravatar.cc/40" alt="">
+
+    </div>
+
+</div>
 
 
         <!-- CARD -->
@@ -393,22 +419,62 @@ $total_monitoring = mysqli_num_rows(
 
 
             <!-- CHART -->
-            <div class="chart-box">
+                   <!-- CHART -->
+<div class="chart-box">
 
-                <h3>Activity</h3>
+    <h3>Statistik Paket Terlaris</h3>
 
-                <div class="bar-container">
+    <canvas id="paketChart" height="120"></canvas>
 
-                    <div class="bar" style="height:40%"></div>
-                    <div class="bar" style="height:50%"></div>
-                    <div class="bar" style="height:65%"></div>
-                    <div class="bar" style="height:75%"></div>
-                    <div class="bar" style="height:55%"></div>
-                    <div class="bar" style="height:70%"></div>
-                    <div class="bar" style="height:85%"></div>
-                    <div class="bar" style="height:90%"></div>
+</div>
 
-                </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const ctx = document.getElementById('paketChart');
+
+new Chart(ctx, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: <?php echo json_encode($label_paket); ?>,
+
+        datasets: [{
+
+            label: 'Jumlah Pelanggan',
+
+            data: <?php echo json_encode($data_paket); ?>,
+
+            borderWidth: 1
+
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+
+        scales: {
+
+            y: {
+                beginAtZero: true
+            }
+
+        }
+
+    }
+
+});
+
+</script>
 
             </div>
 

@@ -149,10 +149,15 @@ $total_monitoring = mysqli_num_rows(
         <!-- TOPBAR -->
         <div class="topbar">
 
-            <button class="dashboard-btn">
-                <i class="fa-solid fa-users"></i>
-                Pelanggan
-            </button>
+    <div style="display:flex; align-items:center; gap:15px;">
+
+        <button class="dashboard-btn">
+
+            <i class="fa-solid fa-users"></i>
+
+            Pelanggan
+
+        </button>
 
         <form method="GET" class="search-form">
 
@@ -170,7 +175,16 @@ $total_monitoring = mysqli_num_rows(
             </div>
 
         </form>
-        </div>
+
+    </div>
+
+    <div class="profile">
+
+        <img src="https://i.pravatar.cc/40" alt="">
+
+    </div>
+
+</div>
 
         <!-- CARD -->
         <div class="card-container">
