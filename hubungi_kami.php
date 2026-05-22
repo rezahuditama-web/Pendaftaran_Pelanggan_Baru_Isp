@@ -338,7 +338,6 @@ if(isset($_POST['kirim'])){
             <a href="#">Bantuan <i class="fa-solid fa-chevron-down" style="font-size:11px;"></i></a>
             <div class="dropdown-menu">
                 <a href="faq.php">FAQ</a>
-                <a href="hubungi_kami.php">Hubungi Kami</a>
             </div>
         </li>
         <li><a href="hubungi_kami.php" class="active">Hubungi kami</a></li>
