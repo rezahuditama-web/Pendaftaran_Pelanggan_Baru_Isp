@@ -189,7 +189,7 @@ while($row = mysqli_fetch_assoc($queryChart)) {
 
             <li>
                 <i class="fa-solid fa-gear"></i>
-                <a href="setting_user.php">Pengaturan</a>
+                <a href=".php">Pengaturan</a>
             </li>
 
         </ul>
