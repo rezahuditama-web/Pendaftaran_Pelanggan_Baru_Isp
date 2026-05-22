@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wifi Premium Bisnis - Gala Data</title>
+    <title>Wifi Basic Home - Gala Data</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -18,80 +19,10 @@
             font-family:'Poppins',sans-serif;
             background:#001b3b;
             color:white;
-
-                padding-top:90px;
         }
 
         a{
             text-decoration:none;
-        }
-
-        /* NAVBAR */
-    .navbar {
-            width: 100%;
-            background: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 8%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo h2 {
-            font-size: 24px;
-            color: #1a73e8;
-            font-weight: 800;
-        }
-
-        .logo span {
-            font-size: 10px;
-            color: #777;
-            display: block;
-        }
-        .logo-circle{
-            width:60px;
-            height:60px;
-            border-radius:50%;
-           
-            display:flex;
-            justify-content:center;
-            align-items:center;
-
-            font-size:26px;
-            font-weight:700;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 35px;
-        }
-
-        .nav-menu a {
-            color: #111;
-            font-size: 15px;
-            font-weight: 600;
-            transition: .3s;
-        }
-
-        .nav-menu a:hover {
-            color: #1a73e8;
-        }
-
-        .btn-login {
-            background: linear-gradient(90deg, #1a73e8, #13b0ff);
-            color: white;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-weight: 600;
         }
 
         /* HERO */
@@ -251,48 +182,24 @@
                 font-size:35px;
             }
 
-            .navbar{
-                flex-direction:column;
-                gap:20px;
-            }
-
-            .menu{
-                flex-wrap:wrap;
-                justify-content:center;
-            }
         }
     </style>
 </head>
 <body>
+<?php include 'navbar.php'; 
 
-    <!-- NAVBAR -->
-  <nav class="navbar">
-        <div class="logo">
-            <div class="logo-circle">
-                    <img src="asset/logo ISP.svg" alt="Logo ISP" style="width: 60px; height: 60px;, margin-top: 100px;">
-                </div>
-            <div>
-                <h2>GALA DATA</h2>
-                <span>BEST SOLUTION FAST INTERNET</span>
-            </div>
-        </div>
+include 'koneksi.php';
 
-        <div class="nav-menu">
-            <a href="#">Home</a>
-            <a href="#paket">Paket Harga</a>
-            <a href="#bantuan">Bantuan</a>
-            <a href="#kontak">Hubungi Kami</a>
-        </div>
-
-        <a href="loginadmin.php" class="btn-login">Login Admin</a>
-    </nav>
+$query = mysqli_query(
+    $koneksi,
+    "SELECT * FROM paket 
+     WHERE jenis_paket='Bisnis'"
+);
+?>
 
 
-    <!-- HERO -->
     <section class="hero">
-
         <h1>Wifi Premium Bisnis</h1>
-
         <h2>Internet Unlimited</h2>
 
         <p>
@@ -301,43 +208,17 @@
             stabil, dan support prioritas.
         </p>
 
-
         <div class="fitur">
-
-            <div class="fitur-box">
-                Dedicated Support
-            </div>
-
-            <div class="fitur-box">
-                Unlimited Bandwidth
-            </div>
-
-            <div class="fitur-box">
-                Gratis Instalasi
-            </div>
-
+            <div class="fitur-box">Dedicated Support</div>
+            <div class="fitur-box">Unlimited Bandwidth</div>
+            <div class="fitur-box">Gratis Instalasi</div>
         </div>
-
     </section>
-
-
 
 
        <section class="paket-container">
 
-<?php
-
-include 'koneksi.php';
-
-$query = mysqli_query(
-    $koneksi,
-    "SELECT * FROM paket 
-     WHERE jenis_paket='bisnis'"
-);
-
-while($data = mysqli_fetch_array($query)){
-
-?>
+<?php while($data = mysqli_fetch_array($query)) { ?>
 
     <div class="paket-card">
 
@@ -348,7 +229,7 @@ while($data = mysqli_fetch_array($query)){
             </h3>
 
             <h1>
-                <?php echo $data['kecepatan']; ?>
+                <?php echo str_replace(' Mbps', '', $data['kecepatan']); ?>
             </h1>
 
             <span>Mbps</span>
@@ -356,11 +237,9 @@ while($data = mysqli_fetch_array($query)){
         </div>
 
         <ul class="benefit">
-
             <li>WiFi Modem</li>
-            <li>Unlimited Internet</li>
-            <li>Support Prioritas</li>
-
+            <li>Kuota Unlimited</li>
+            <li>Gratis Instalasi</li>
         </ul>
 
         <div class="harga">
@@ -381,40 +260,28 @@ while($data = mysqli_fetch_array($query)){
 
     </div>
 
-<?php
-}
-?>
+<?php } ?>
 
-</section>
-
+    </section>
+    
 
 
     <div class="catatan">
-        * Harga sudah termasuk PPN 10%
+        * Harga di atas sudah termasuk PPN 10%
     </div>
 
 
-
-    <!-- FOOTER -->
     <footer>
-
         <div class="footer-box">
-
             <div>
                 <h2>Apakah anda butuh bantuan?</h2>
-
                 <p>
-                    Kami akan memberikan informasi detail
-                    tentang layanan internet terbaik kami.
+                    Kami akan memberikan informasi detail tentang layanan dan produk unggulan kami.
                 </p>
             </div>
 
-            <a href="#">
-                Hubungi Kami
-            </a>
-
+            <a href="hubungi_kami.php">Hubungi Kami</a>
         </div>
-
     </footer>
 
 </body>
