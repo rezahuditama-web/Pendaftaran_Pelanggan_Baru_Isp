@@ -460,7 +460,7 @@ if(isset($_POST['kirim'])){
     <div class="info-card">
         <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
         <h3>Kantor</h3>
-        <p>Jl. Contoh No. 123<br>Kota Anda, Jawa Timur</p>
+        <p> Ds.benelan kidul <br>Banyuwangi, Jawa Timur</p>
         <a href="#">Lihat di Maps</a>
     </div>
 </section>
