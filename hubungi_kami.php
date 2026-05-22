@@ -41,80 +41,12 @@ if(isset($_POST['kirim'])){
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+            a { text-decoration: none; }
         body {
             font-family: 'Poppins', sans-serif;
             background: #f0f4f8;
             min-height: 100vh;
         }
-
-        /* ===== NAVBAR ===== */
-        .navbar {
-            background: #fff;
-            padding: 0 60px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 12px rgba(0,0,0,.08);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .nav-logo {
-            display: flex; align-items: center; gap: 10px;
-            text-decoration: none;
-        }
-        .nav-logo-text strong {
-            display: block; font-size: 18px;
-            font-weight: 800; color: #1a73e8;
-        }
-        .nav-logo-text span {
-            font-size: 9px; color: #888;
-            letter-spacing: 1.5px; text-transform: uppercase;
-        }
-        .nav-links {
-            display: flex; align-items: center; gap: 32px;
-            list-style: none;
-        }
-        .nav-links a {
-            text-decoration: none; color: #444;
-            font-size: 14px; font-weight: 500;
-            transition: color .2s;
-        }
-        .nav-links a:hover,
-        .nav-links a.active { color: #1a73e8; }
-        .nav-links .dropdown { position: relative; }
-        .nav-links .dropdown-menu {
-            display: none; position: absolute;
-            top: 100%; left: 0; background: #fff;
-            border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.12);
-            min-width: 160px; padding: 8px 0; z-index: 200;
-        }
-        .nav-links .dropdown:hover .dropdown-menu { display: block; }
-        .nav-links .dropdown-menu a {
-            display: block; padding: 10px 18px;
-            font-size: 13px;
-        }
-        .nav-links .dropdown-menu a:hover { background: #f0f7ff; }
-
-        .nav-btns { display: flex; gap: 10px; }
-        .btn-daftar {
-            background: #1a73e8; color: #fff;
-            border: none; padding: 9px 22px;
-            border-radius: 8px; font-family: 'Poppins', sans-serif;
-            font-size: 14px; font-weight: 600; cursor: pointer;
-            text-decoration: none; transition: background .2s;
-        }
-        .btn-daftar:hover { background: #0d5bc7; }
-        .btn-masuk {
-            background: #fff; color: #1a73e8;
-            border: 2px solid #1a73e8; padding: 9px 22px;
-            border-radius: 8px; font-family: 'Poppins', sans-serif;
-            font-size: 14px; font-weight: 600; cursor: pointer;
-            text-decoration: none; transition: all .2s;
-        }
-        .btn-masuk:hover { background: #f0f7ff; }
 
         /* ===== HERO SECTION ===== */
         .hero {
@@ -292,8 +224,7 @@ if(isset($_POST['kirim'])){
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .navbar { padding: 0 20px; }
-            .nav-links, .nav-btns { display: none; }
+
             .hero { flex-direction: column; padding: 40px 20px; }
             .hero-illust { display: none; }
             .hero-title { font-size: 22px; }
@@ -303,52 +234,7 @@ if(isset($_POST['kirim'])){
     </style>
 </head>
 <body>
-
-<!-- ===== NAVBAR ===== -->
-<nav class="navbar">
-    <a href="index.php" class="nav-logo">
-        <svg width="38" height="38" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="24" fill="#1a73e8" opacity=".1"/>
-            <circle cx="24" cy="24" r="6" fill="#1a73e8"/>
-            <circle cx="12" cy="14" r="4" fill="#1a73e8" opacity=".7"/>
-            <circle cx="36" cy="14" r="4" fill="#1a73e8" opacity=".7"/>
-            <circle cx="12" cy="34" r="4" fill="#1a73e8" opacity=".7"/>
-            <circle cx="36" cy="34" r="4" fill="#1a73e8" opacity=".7"/>
-            <line x1="24" y1="24" x2="12" y2="14" stroke="#1a73e8" stroke-width="2"/>
-            <line x1="24" y1="24" x2="36" y2="14" stroke="#1a73e8" stroke-width="2"/>
-            <line x1="24" y1="24" x2="12" y2="34" stroke="#1a73e8" stroke-width="2"/>
-            <line x1="24" y1="24" x2="36" y2="34" stroke="#1a73e8" stroke-width="2"/>
-        </svg>
-        <div class="nav-logo-text">
-            <strong>GALA DATA</strong>
-            <span>Best Solution Fast Internet</span>
-        </div>
-    </a>
-
-    <ul class="nav-links">
-        <li><a href="index.php">Home</a></li>
-        <li class="dropdown">
-            <a href="#">Paket Harga <i class="fa-solid fa-chevron-down" style="font-size:11px;"></i></a>
-            <div class="dropdown-menu">
-                <a href="#">Paket Rumah</a>
-                <a href="#">Paket Bisnis</a>
-            </div>
-        </li>
-        <li class="dropdown">
-            <a href="#">Bantuan <i class="fa-solid fa-chevron-down" style="font-size:11px;"></i></a>
-            <div class="dropdown-menu">
-                <a href="faq.php">FAQ</a>
-            </div>
-        </li>
-        <li><a href="hubungi_kami.php" class="active">Hubungi kami</a></li>
-    </ul>
-
-    <div class="nav-btns">
-        <a href="daftar.php" class="btn-daftar">Daftar</a>
-        <a href="login.php"  class="btn-masuk">Masuk</a>
-    </div>
-</nav>
-
+<?php include 'navbar.php'; ?>
 <!-- ===== HERO + FORM ===== -->
 <section class="hero">
 
