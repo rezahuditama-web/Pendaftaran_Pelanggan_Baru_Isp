@@ -25,68 +25,6 @@
             text-decoration: none;
         }
 
-        /* ================= NAVBAR ================= */
-        .navbar {
-            width: 100%;
-            background: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 8%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo h2 {
-            font-size: 24px;
-            color: #1a73e8;
-            font-weight: 800;
-        }
-
-        .logo span {
-            font-size: 10px;
-            color: #777;
-            display: block;
-        }
-        .logo-circle img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    display: block;
-}
-
-        .nav-menu {
-            display: flex;
-            gap: 35px;
-        }
-
-        .nav-menu a {
-            color: #111;
-            font-size: 15px;
-            font-weight: 600;
-            transition: .3s;
-        }
-
-        .nav-menu a:hover {
-            color: #1a73e8;
-        }
-
-        .btn-login {
-            background: linear-gradient(90deg, #1a73e8, #13b0ff);
-            color: white;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
         /* ================= HERO ================= */
         .hero {
             width: 100%;
@@ -366,16 +304,6 @@
                 height: 320px;
             }
 
-            .navbar {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .nav-menu {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
             .fitur-title h2,
             .paket-text h2 {
                 font-size: 36px;
@@ -385,28 +313,7 @@
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="logo">
-            <div class="logo-circle">
-    <img src="asset/logo ISP.svg" alt="Logo ISP">
-</div>
-            <div>
-                <h2>GALA DATA</h2>
-                <span>BEST SOLUTION FAST INTERNET</span>
-            </div>
-        </div>
-
-        <div class="nav-menu">
-    <a href="index.php">Home</a>
-    <a href="index.php#paket">Paket Harga</a>
-    <a href="index.php#bantuan">Bantuan</a>
-    <a href="hubungi_kami.php">Hubungi Kami</a>
-</div>
-
-        <a href="loginadmin.php" class="btn-login">Login Admin</a>
-    </nav>
-
+  <?php include 'navbar.php'; ?>  
 
     <!-- HERO -->
     <section class="hero">
@@ -566,15 +473,15 @@
                 </p>
             </div>
 
-            <a href="#" class="footer-btn">Hubungi Kami</a>
+            <a href="hubungi_kami.php" class="footer-btn">Hubungi Kami</a>
         </div>
 
 
         <div class="footer-grid">
             <div>
                 <h4>PAKET & HARGA</h4>
-                <a href="#">Stream</a>
-                <a href="#">Stream+</a>
+                <a href="pakethome.php">Paket Rumah</a>
+                <a href="paketbisnis.php">Paket Bisnis</a>
                 <a href="#">Installation</a>
             </div>
 
@@ -582,7 +489,7 @@
                 <h4>PELANGGAN</h4>
                 <a href="#">Daftar</a>
                 <a href="#">Masuk</a>
-                <a href="#">Hubungi Kami</a>
+                <a href="hubungi_kami.php">Hubungi Kami</a>
             </div>
 
             <div>
