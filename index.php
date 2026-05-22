@@ -588,7 +588,7 @@
             <div>
                 <h4>INFO</h4>
                 <a href="#">Promo</a>
-                <a href="#">Info Cara Bayar</a>
+               <!-- <a href="#">Info Cara Bayar</a> -->
                 <a href="#">FAQ</a>
             </div>
 
