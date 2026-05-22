@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-
         *{
             margin:0;
             padding:0;
@@ -19,15 +18,16 @@
             font-family:'Poppins',sans-serif;
             background:#001b3b;
             color:white;
-            padding-top:100px;
+
+                padding-top:90px;
         }
 
         a{
             text-decoration:none;
         }
 
-         /* ================= NAVBAR ================= */
-        .navbar {
+        /* NAVBAR */
+    .navbar {
             width: 100%;
             background: #ffffff;
             display: flex;
@@ -93,6 +93,7 @@
             border-radius: 8px;
             font-weight: 600;
         }
+
         /* HERO */
         .hero{
             text-align:center;
@@ -100,20 +101,20 @@
         }
 
         .hero h1{
-            font-size:70px;
+            font-size:72px;
             color:#13b0ff;
         }
 
         .hero h2{
-            font-size:50px;
-            margin-bottom:20px;
+            font-size:52px;
+            margin-bottom:25px;
         }
 
         .hero p{
-            max-width:750px;
+            color:#d4d4d4;
+            max-width:700px;
             margin:auto;
             line-height:1.8;
-            color:#d4d4d4;
         }
 
         .fitur{
@@ -131,20 +132,20 @@
             font-weight:600;
         }
 
-        /* CARD */
+        /* CARD PAKET */
         .paket-container{
             display:grid;
             grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
             gap:40px;
-            padding:60px 8%;
+            padding:60px 10%;
         }
 
         .paket-card{
             border:2px solid #13b0ff;
-            border-radius:15px;
+            border-radius:10px;
             padding:35px 25px;
             text-align:center;
-            background:rgba(255,255,255,0.03);
+            background:rgba(255,255,255,0.02);
         }
 
         .speed-circle{
@@ -152,9 +153,7 @@
             height:239px;
             border:3px solid #13b0ff;
             border-radius:50%;
-            margin:auto;
-            margin-bottom:30px;
-
+            margin:0 auto 30px;
             display:flex;
             flex-direction:column;
             justify-content:center;
@@ -162,24 +161,24 @@
         }
 
         .speed-circle h3{
-            font-size:18px; 
-            color:#d0d0d0;
+            font-size:18px;
             margin-bottom:10px;
+            color:#c7c7c7;
         }
 
         .speed-circle h1{
-            font-size:58px;  \\58
+            font-size:60px;
         }
 
         .speed-circle span{
-            font-size:22px;  \\22
+            font-size:22px;
         }
 
         .benefit{
             margin:25px 0;
             text-align:left;
-            line-height:2.2;
-            padding-left:15px;
+            line-height:2.3;
+            padding-left:20px;
         }
 
         .benefit li{
@@ -194,29 +193,29 @@
 
         .harga{
             margin:25px 0;
-            border-top:1px solid #777;
-            padding-top:20px;
             font-size:22px;
             font-weight:700;
+            border-top:1px solid #888;
+            padding-top:20px;
         }
 
         .harga strong{
-            font-size:48px;
+            font-size:50px;
         }
 
         .btn-daftar{
             display:inline-block;
             background:linear-gradient(90deg,#1a73e8,#13b0ff);
             color:white;
-            padding:12px 30px;
-            border-radius:10px;
+            padding:12px 25px;
+            border-radius:8px;
             font-weight:700;
         }
 
         .catatan{
             text-align:center;
-            color:#d4d4d4;
             margin-bottom:70px;
+            color:#d6d6d6;
         }
 
         footer{
@@ -228,7 +227,6 @@
             background:linear-gradient(90deg,#001d3d,#13b0ff);
             padding:40px;
             border-radius:20px;
-
             display:flex;
             justify-content:space-between;
             align-items:center;
@@ -245,6 +243,13 @@
         }
 
         @media(max-width:768px){
+            .hero h1{
+                font-size:45px;
+            }
+
+            .hero h2{
+                font-size:35px;
+            }
 
             .navbar{
                 flex-direction:column;
@@ -255,16 +260,7 @@
                 flex-wrap:wrap;
                 justify-content:center;
             }
-
-            .hero h1{
-                font-size:45px;
-            }
-
-            .hero h2{
-                font-size:35px;
-            }
         }
-
     </style>
 </head>
 <body>
