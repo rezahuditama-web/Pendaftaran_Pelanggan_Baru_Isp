@@ -39,10 +39,10 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .logo {//enk
+        .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
 
         .logo h2 {
@@ -56,18 +56,12 @@
             color: #777;
             display: block;
         }
-        .logo-circle{
-            width:60px;
-            height:60px;
-            border-radius:50%;
-           
-            display:flex;
-            justify-content:center;
-            align-items:center;
-
-            font-size:26px;
-            font-weight:700;
-        }
+        .logo-circle img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    display: block;
+}
 
         .nav-menu {
             display: flex;
@@ -395,8 +389,8 @@
     <nav class="navbar">
         <div class="logo">
             <div class="logo-circle">
-                    <img src="asset/logo ISP.svg" alt="Logo ISP" style="width: 60px; height: 60px;, margin-top: 100px;">
-                </div>
+    <img src="asset/logo ISP.svg" alt="Logo ISP">
+</div>
             <div>
                 <h2>GALA DATA</h2>
                 <span>BEST SOLUTION FAST INTERNET</span>
