@@ -404,11 +404,11 @@
         </div>
 
         <div class="nav-menu">
-            <a href="#">Home</a>
-            <a href="#paket">Paket Harga</a>
-            <a href="#bantuan">Bantuan</a>
-            <a href="#kontak">Hubungi Kami</a>
-        </div>
+    <a href="index.php">Home</a>
+    <a href="index.php#paket">Paket Harga</a>
+    <a href="index.php#bantuan">Bantuan</a>
+    <a href="hubungi_kami.php">Hubungi Kami</a>
+</div>
 
         <a href="loginadmin.php" class="btn-login">Login Admin</a>
     </nav>
