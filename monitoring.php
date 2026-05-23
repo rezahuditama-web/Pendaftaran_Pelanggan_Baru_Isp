@@ -234,7 +234,8 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
             <li><i class="fa-solid fa-hammer"></i><a href="pemasangan.php">Pemasangan</a></li>
             <li class="active"><i class="fa-solid fa-clipboard-check"></i><a href="monitoring.php">Monitoring</a></li>
             <li><i class="fa-solid fa-globe"></i><a href="setting_paket.php">Setting Paket</a></li>
-            <li><i class="fa-solid fa-gear"></i><a href="setting_user.php">Pengaturan</a></li>
+            <li> <i class="fa-solid fa-envelope"></i><a href="contact.php">Pesan Masuk</a></li>
+            <li><i class="fa-solid fa-gear"></i><a href="setting_admin.php">Pengaturan</a></li>
         </ul>
         <div class="logout">
             <i class="fa-solid fa-right-from-bracket"></i> Logout
