@@ -188,8 +188,13 @@ while($row = mysqli_fetch_assoc($queryChart)) {
             </li>
 
             <li>
+                <i class="fa-solid fa-envelope"></i>
+                <a href="contact.php">Pesan Masuk</a>
+            </li>
+
+            <li>
                 <i class="fa-solid fa-gear"></i>
-                <a href="pengaturan.php">Pengaturan</a>
+                <a href="setting_admin.php">Pengaturan</a>
             </li>
 
         </ul>
