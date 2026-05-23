@@ -346,7 +346,7 @@ if(isset($_POST['kirim'])){
         <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
         <h3>Kantor</h3>
         <p> Ds.benelan kidul <br>Banyuwangi, Jawa Timur</p>
-        <!-- <a href="#">Lihat di Maps</a> -->
+        <a href="https://maps.app.goo.gl/iKuhUm2RtTJCo2WU8" target="_blank">Lihat di Maps</a>
     </div>
 </section>
 
