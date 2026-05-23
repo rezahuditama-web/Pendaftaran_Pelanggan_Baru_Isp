@@ -1,17 +1,16 @@
 
     <style>
-        .navbar {
-            width: 100%;
-            background: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 8%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+       .navbar{
+    width:100%;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:20px 8%;
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
 
         .logo {
             display: flex;
@@ -37,11 +36,18 @@
     display: block;
 }
 
-        .nav-menu {
-            display: flex;
-            align-items:center;
-            gap: 35px;
-        }
+       .nav-menu{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+}
+.menu-center{
+    display:flex;
+    align-items:center;
+    gap:35px;
+}
 
         .nav-menu a {
             color: #111;
@@ -54,14 +60,16 @@
             color: #1a73e8;
         }
 
-        .btn-login {
-            background: linear-gradient(90deg, #1a73e8, #13b0ff);
-            color: white !important;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            
-        }
+        .btn-login{
+    position:absolute;
+    right:0;
+
+    background: linear-gradient(90deg, #1a73e8, #13b0ff);
+    color:white !important;
+    padding:12px 30px;
+    border-radius:8px;
+    font-weight:600;
+}
 
         /* ================= DROPDOWN ================= */
         .dropdown{
@@ -117,110 +125,169 @@
 
        
         /* ================= RESPONSIVE ================= */
-        @media(max-width: 900px) {
-       
-    .navbar{
-        padding:20px 5%;
-        flex-wrap:wrap;
-    }
+       @media(max-width:900px){
 
-    /* tombol hamburger muncul */
-    .hamburger{
-        display:flex;
-    }
+.navbar{
+    padding:20px 5%;
+    flex-wrap:wrap;
+    position:relative;
+}
 
-    /* menu mobile */
-    .nav-menu{
-        width:100%;
-        display:none;
-        flex-direction:column;
-        align-items:flex-start;
-        gap:5px;
-        margin-top:20px;
-        background:#fff;
-    padding:20px 0;
-    }
+/* hamburger */
+.hamburger{
+    display:flex;
+    margin-left:auto;
+}
 
-    .nav-menu.active{
-        display:flex;
-    }
+/* menu mobile */
+.nav-menu{
 
-    .nav-menu a{
-        width:100%;
-        padding:12px 0;
-    }
+    display:none;
+    flex-direction:column;
 
-    /* dropdown mobile */
-    .dropdown{
-        width:100%;
-    }
+    position:absolute;
+    top:100%;
+    left:0;
 
-    .dropdown-menu{
-        position:static;
-        display:none;
-        box-shadow:none;
-        padding-left:15px;
-        margin-top:5px;
-    }
+    width:100%;
 
-    .dropdown.active .dropdown-menu{
-        display:block;
-    }
+    background:#fff;
 
-    .btn-login{
-        display:inline-block;
-        margin-top:10px;
-           width:100%;
+    padding:20px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+
+    justify-content:flex-start;
+    align-items:flex-start;
+
+    z-index:999;
+}
+
+.nav-menu.active{
+    display:flex;
+}
+
+.menu-center{
+
+    width:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:20px;
+
+    align-items:flex-start;
+}
+
+.nav-menu a{
+    width:100%;
+    padding:10px 0;
+}
+
+/* dropdown */
+.dropdown{
+    width:100%;
+}
+
+.dropdown-menu{
+
+    position:static;
+
+    display:none;
+
+    width:100%;
+
+    box-shadow:none;
+
+    background:#f7f9fc;
+
+    border-radius:8px;
+
+    margin-top:5px;
+
+    padding-left:15px;
+}
+
+.dropdown.active .dropdown-menu{
+    display:block;
+}
+
+.btn-login{
+
+    position:static;
+
+    width:100%;
+
     text-align:center;
-    }
+
+    margin-top:10px;
+}
+
+
 
         }
 
     </style>
 
     <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="logo">
-            <div class="logo-circle">
-    <img src="asset/logo ISP.svg" alt="Logo ISP">
-</div>
-            <div>
-                <h2>GALA DATA</h2>
-                <span>BEST SOLUTION FAST INTERNET</span>
-            </div>
+   <nav class="navbar">
+
+    <!-- LOGO -->
+    <div class="logo">
+        <div class="logo-circle">
+            <img src="asset/logo ISP.svg" alt="Logo ISP">
         </div>
-         <!-- HAMBURGER -->
+
+        <div>
+            <h2>GALA DATA</h2>
+            <span>BEST SOLUTION FAST INTERNET</span>
+        </div>
+    </div>
+
+    <!-- HAMBURGER -->
     <div class="hamburger" id="hamburger">
         <span></span>
         <span></span>
         <span></span>
     </div>
 
-        <div class="nav-menu" id="navmenu">
-    <a href="index.php">Home</a>
-     <!-- DROPDOWN PAKET -->
-        <div class="dropdown">
-            <a href="#">Paket Harga ▾</a>
+    <!-- MENU -->
+    <div class="nav-menu" id="navmenu">
 
-            <div class="dropdown-menu">
-                <a href="pakethome.php">Paket Rumah</a>
-                <a href="paketbisnis.php">Paket Bisnis</a>
+        <!-- WRAPPER MENU TENGAH -->
+        <div class="menu-center">
+
+            <a href="index.php">Home</a>
+
+            <div class="dropdown">
+                <a href="#">Paket Harga ▾</a>
+
+                <div class="dropdown-menu">
+                    <a href="pakethome.php">Paket Rumah</a>
+                    <a href="paketbisnis.php">Paket Bisnis</a>
+                </div>
             </div>
+
+            <div class="dropdown">
+                <a href="#">Bantuan ▾</a>
+
+                <div class="dropdown-menu">
+                    <a href="FAQ.php">FAQ</a>
+                </div>
+            </div>
+
+            <a href="hubungi_kami.php">Hubungi Kami</a>
+
         </div>
 
-        <!-- DROPDOWN BANTUAN -->
-        <div class="dropdown">
-            <a href="#">Bantuan ▾</a>
+        <!-- LOGIN -->
+        <a href="loginadmin.php" class="btn-login">
+            Login Admin
+        </a>
 
-            <div class="dropdown-menu">
-                <a href="FAQ.php">FAQ</a>
-            </div>
-        </div>
-    <a href="hubungi_kami.php">Hubungi Kami</a>
-
-        <a href="loginadmin.php" class="btn-login">Login Admin</a>
     </div>
-    </nav>
+
+</nav>
 
     <script>
 
