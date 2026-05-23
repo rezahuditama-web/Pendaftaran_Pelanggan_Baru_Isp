@@ -6,27 +6,45 @@ $pesan_error  = "";
 
 /* ======================================
    PROSES KIRIM PESAN
+   Tabel: contact
+   Kolom: id_contact, nama_pengirim, email, no_hp, subjek, isi_pesan, tanggal_kirim
 ====================================== */
 if(isset($_POST['kirim'])){
-    $subjek       = mysqli_real_escape_string($koneksi, $_POST['subjek']);
-    $nama         = mysqli_real_escape_string($koneksi, $_POST['nama']);
-    $email        = mysqli_real_escape_string($koneksi, $_POST['email']);
-    $telepon      = mysqli_real_escape_string($koneksi, $_POST['telepon']);
-    $pesan        = mysqli_real_escape_string($koneksi, $_POST['pesan']);
+    $subjek        = mysqli_real_escape_string($koneksi, trim($_POST['subjek']));
+    $nama_pengirim = mysqli_real_escape_string($koneksi, trim($_POST['nama']));
+    $email         = mysqli_real_escape_string($koneksi, trim($_POST['email']));
+    $no_hp         = mysqli_real_escape_string($koneksi, trim($_POST['telepon']));
+    $isi_pesan     = mysqli_real_escape_string($koneksi, trim($_POST['pesan']));
 
-    if(empty($nama) || empty($email) || empty($pesan)){
+    // Validasi wajib isi
+    if(empty($nama_pengirim) || empty($email) || empty($isi_pesan)){
         $pesan_error = "Nama, Email, dan Pesan wajib diisi.";
-    } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-        $pesan_error = "Format email tidak valid.";
-    } else {
+    }
+    // Validasi format email
+    elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+        $pesan_error = "Format email tidak valid. Contoh: nama@email.com";
+    }
+    // Validasi no HP hanya angka
+    elseif(!empty($no_hp) && !preg_match('/^[0-9+\-\s]{8,15}$/', $no_hp)){
+        $pesan_error = "Nomor HP hanya boleh berisi angka (8–15 digit).";
+    }
+    // Validasi panjang pesan
+    elseif(strlen($isi_pesan) > 1000){
+        $pesan_error = "Pesan terlalu panjang. Maksimal 1000 karakter.";
+    }
+    else {
+        // Simpan ke tabel contact
         $q = mysqli_query($koneksi,"
-            INSERT INTO pesan_kontak(subjek, nama, email, telepon, pesan, tanggal)
-            VALUES('$subjek','$nama','$email','$telepon','$pesan', NOW())
+            INSERT INTO contact (nama_pengirim, email, no_hp, subjek, isi_pesan, tanggal_kirim)
+            VALUES ('$nama_pengirim','$email','$no_hp','$subjek','$isi_pesan', NOW())
         ");
+
         if($q){
             $pesan_sukses = "Pesan berhasil dikirim! Kami akan segera menghubungi Anda.";
+            // Kosongkan input setelah berhasil
+            $_POST = [];
         } else {
-            $pesan_error = "Gagal mengirim pesan. Silakan coba lagi.";
+            $pesan_error = "Gagal menyimpan pesan: " . mysqli_error($koneksi);
         }
     }
 }
