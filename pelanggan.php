@@ -130,8 +130,13 @@ $total_monitoring = mysqli_num_rows(
             </li>
 
             <li>
+                <i class="fa-solid fa-envelope"></i>
+                <a href="contact.php">Pesan Masuk</a>
+            </li>
+
+            <li>
                 <i class="fa-solid fa-gear"></i>
-                <a href="setting_user.php">Pengaturan</a>
+                <a href="setting_admin.php">Pengaturan</a>
             </li>
 
         </ul>
