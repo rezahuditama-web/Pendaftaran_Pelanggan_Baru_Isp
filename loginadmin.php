@@ -372,7 +372,7 @@ if (isset($_POST['username'])) {
                             Remember Me
                         </label>
 
-                        <a href="#">
+                        <a href="lupapassword.php">
                             Lupa Password?
                         </a>
 
