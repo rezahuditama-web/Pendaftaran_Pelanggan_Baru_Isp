@@ -198,7 +198,7 @@ while($row = mysqli_fetch_assoc($queryChart)) {
 
             <i class="fa-solid fa-right-from-bracket"></i>
 
-            Logout
+          <a href="logout.php">Logout</a>
 
         </div>
 
