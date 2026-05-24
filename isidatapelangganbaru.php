@@ -26,8 +26,8 @@ if ($step == 1 && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($alamat))
         $errors[] = "Alamat wajib diisi.";
 
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL))
-        $errors[] = "Email tidak valid.";
+    // if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL))
+    //     $errors[] = "Email tidak valid.";
 
     if (empty($telepon) || !preg_match('/^\d{10,13}$/', $telepon))
         $errors[] = "No Telephone harus 10–13 digit.";
@@ -179,6 +179,7 @@ $id_pelanggan = mysqli_insert_id($koneksi);
                 id_pelanggan,
                 id_admin,
                 id_paket,
+                alamat_pemasangan,
                 status_verifikasi,
                 tanggal_pengajuan
             )
@@ -188,6 +189,7 @@ $id_pelanggan = mysqli_insert_id($koneksi);
                 '$id_pelanggan',
                 NULL,
                 '$id_paket',
+                '$alamat',
                 'Pending',
                 NOW()
             )"
@@ -474,7 +476,7 @@ $paket_premium = [
             </div>
 
 <div>
-    <label for="password">Password *</label>
+    <label for="password">Buat Password *</label>
 
     <input 
         type="password"
@@ -509,11 +511,11 @@ $paket_premium = [
                 <label for="alamat">Alamat *</label>
                 <textarea id="alamat" name="alamat" placeholder="Sesuai KTP/SIM/Pasport"><?= htmlspecialchars($_POST['alamat'] ?? '') ?></textarea>
             </div>
-            <div>
+            <!-- <div>
                 <label for="email">Email *</label>
                 <input type="email" id="email" name="email" placeholder="Email Anda"
                        value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"/>
-            </div>
+            </div> -->
             <div>
                 <label for="telepon">No Telephone *</label>
                 <input type="tel" id="telepon" name="telepon" placeholder="No Telephone"
