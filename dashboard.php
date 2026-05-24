@@ -238,11 +238,11 @@ while($row = mysqli_fetch_assoc($queryChart)) {
 
     </div>
 
-    <div class="profile">
+    <!-- <div class="profile">
 
         <img src="https://i.pravatar.cc/40" alt="">
 
-    </div>
+    </div> -->
 
 </div>
 
