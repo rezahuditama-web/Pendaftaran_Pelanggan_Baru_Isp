@@ -71,7 +71,7 @@ $total_pelanggan   = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pelang
 $total_pendaftaran = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pendaftaran_pemasangan"));
 $total_pending     = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pendaftaran_pemasangan WHERE status_verifikasi='pending'"));
 $total_terpasang   = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pemasangan WHERE status_pemasangan='terpasang'"));
-$total_gangguan    = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM monitoring WHERE status_koneksi='gangguan'"));
+$total_gangguan    = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM monitoring WHERE status_koneksi='offline'"));
 
 /* ======================================
    AMBIL DATA MONITORING
@@ -319,7 +319,7 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
                         <?php if($row['status_koneksi'] == 'online'): ?>
                             <span class="status-online"><i class="fa-solid fa-circle-check"></i> Online</span>
                         <?php else: ?>
-                            <span class="status-gangguan"><i class="fa-solid fa-circle-xmark"></i> Gangguan</span>
+                            <span class="status-gangguan"><i class="fa-solid fa-circle-xmark"></i> Offline</span>
                         <?php endif; ?>
                     </td>
                     <td><?= htmlspecialchars($row['keterangan']); ?></td>
@@ -466,7 +466,7 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
             <label class="form-label">Status Koneksi *</label>
             <select name="status_koneksi" required>
                 <option value="online">Online</option>
-                <option value="gangguan">Gangguan</option>
+                <option value="offline">Offline</option>
             </select>
 
             <label class="form-label">Keterangan *</label>
@@ -521,7 +521,7 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
             <label class="form-label">Status Koneksi *</label>
             <select name="status_koneksi" id="edit_status_koneksi" required>
                 <option value="online">Online</option>
-                <option value="gangguan">Gangguan</option>
+                <option value="offline">Offline</option>
             </select>
 
             <label class="form-label">Keterangan *</label>
