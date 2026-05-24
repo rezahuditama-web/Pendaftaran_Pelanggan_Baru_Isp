@@ -4,7 +4,7 @@ session_start();
 
 // Kalau sudah login, langsung ke form pendaftaran
 if (isset($_SESSION['id_pelanggan'])) {
-    header("Location: daftar_pemasangan.php");
+    header("Location: isidatapelangganlama.php");
     exit;
 }
 
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['id_pelanggan']   = $cek['id_pelanggan'];
             $_SESSION['nama_pelanggan'] = $cek['nama_pelanggan'];
             $_SESSION['no_nik']         = $cek['no_nik'];
-            header("Location: daftar_pemasangan.php");
+            header("Location: isidatapelangganlama.php");
             exit;
         } else {
             $error = "No NIK atau password salah.";
