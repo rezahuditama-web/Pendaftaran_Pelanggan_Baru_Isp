@@ -1,761 +1,260 @@
+<?php
+session_start();
 
-<!DOCTYPE html>
+// Kalau sudah login, langsung ke form pendaftaran
+if (isset($_SESSION['id_pelanggan'])) {
+    header("Location: isidatapelangganlama.php");
+    exit;
+}
+
+include 'koneksi.php';
+
+$error = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $no_nik  = mysqli_real_escape_string($koneksi, trim($_POST['no_nik']));
+    $password = md5(trim($_POST['password'])); // MD5 — sesuaikan jika pakai plain text
+
+    if (empty($no_nik) || empty($_POST['password'])) {
+        $error = "No NIK dan password wajib diisi.";
+    } else {
+        $cek = mysqli_fetch_assoc(mysqli_query($koneksi,
+            "SELECT * FROM pelanggan WHERE no_nik = '$no_nik' AND password = '$password'"
+        ));
+
+        if ($cek) {
+            $_SESSION['id_pelanggan']   = $cek['id_pelanggan'];
+            $_SESSION['nama_pelanggan'] = $cek['nama_pelanggan'];
+            $_SESSION['no_nik']         = $cek['no_nik'];
+            header("Location: isidatapelangganlama.php");
+            exit;
+        } else {
+            $error = "No NIK atau password salah.";
+        }
+    }
+}
+?><!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gala Data Internet</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Login Pelanggan - Gala Data</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f5f5f5;
-            color: #111;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        /* ================= NAVBAR ================= */
-        .navbar {
-            width: 100%;
-            background: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 8%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo h2 {
-            font-size: 24px;
-            color: #1a73e8;
-            font-weight: 800;
-        }
-
-        .logo span {
-            font-size: 10px;
-            color: #777;
-            display: block;
-        }
-        .logo-circle img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    display: block;
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-        .nav-menu {
-            display: flex;
-            align-items:center;
-            gap: 35px;
-        }
+body{
+    font-family:'Poppins',sans-serif;
+    background:#001b3b;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+}
 
-        .nav-menu a {
-            color: #111;
-            font-size: 15px;
-            font-weight: 600;
-            transition: .3s;
-        }
+.container{
+    width:100%;
+    max-width:1100px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    background:white;
+    border-radius:25px;
+    overflow:hidden;
+}
 
-        .nav-menu a:hover {
-            color: #1a73e8;
-        }
-
-        .btn-login {
-            background: linear-gradient(90deg, #1a73e8, #13b0ff);
-            color: white !important;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            
-        }
-
-        /* ================= DROPDOWN ================= */
-        .dropdown{
-            position:relative;
-        }
-
-        .dropdown-menu{
-            position:absolute;
-            top:35px;
-            left:0;
-            background:#fff;
-            min-width:200px;
-            border-radius:10px;
-            box-shadow:0 5px 15px rgba(0,0,0,0.1);
-            padding:10px 0;
-            display:none;
-        }
-
-        .dropdown-menu a{
-            display:block;
-            padding:12px 20px;
-            font-size:14px;
-        }
-
-        .dropdown-menu a:hover{
-            background:#f3f7ff;
-        }
-
-        .dropdown:hover .dropdown-menu{
-            display:block;
-        }
-
-        /* ================= HAMBURGER ================= */
-.hamburger{
-    display:none;
+.left{
+    background:linear-gradient(135deg,#001b3b,#0d4ea6);
+    color:white;
+    padding:60px 50px;
+    display:flex;
     flex-direction:column;
+    justify-content:center;
+}
+
+.left h1{
+    font-size:48px;
+    margin-bottom:20px;
+}
+
+.left p{
+    line-height:1.8;
+    color:#d6d6d6;
+}
+
+.right{
+    padding:60px 50px;
+}
+
+.logo{
+    color:#1a73e8;
+    font-size:32px;
+    font-weight:800;
+    margin-bottom:40px;
+}
+
+.form-box h2{
+    color:#001b3b;
+    margin-bottom:10px;
+}
+
+.form-box p{
+    color:#666;
+    margin-bottom:35px;
+}
+
+.input-box{
+    margin-bottom:22px;
+}
+
+.input-box label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+.input-box input{
+    width:100%;
+    padding:15px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    outline:none;
+}
+
+.input-box input:focus{
+    border-color:#1a73e8;
+}
+
+.btn-login{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(90deg,#1a73e8,#13b0ff);
+    color:white;
+    font-size:16px;
+    font-weight:700;
     cursor:pointer;
-    gap:5px;
+    margin-top:10px;
 }
 
-.hamburger span{
-    width:28px;
-    height:3px;
-    background:#111;
-    border-radius:5px;
-    transition:0.3s;
+.btn-login:hover{
+    opacity:0.9;
 }
 
-        /* ================= HERO ================= */
-        .hero {
-            width: 100%;
-            min-height: 90vh;
-            background: linear-gradient(135deg, #00152e, #002b59);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 80px 8%;
-            color: white;
-            gap: 40px;
-        }
-
-        .hero-text {
-            flex: 1;
-        }
-
-        .hero-text h5 {
-            font-size: 20px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .hero-text h1 {
-            font-size: 68px;
-            line-height: 1.2;
-            margin-bottom: 25px;
-        }
-
-        .hero-text p {
-            font-size: 18px;
-            color: #d8d8d8;
-            line-height: 1.8;
-            margin-bottom: 30px;
-            max-width: 600px;
-        }
-
-        .hero-text small {
-            display: block;
-            margin-bottom: 35px;
-            color: #c5c5c5;
-        }
-
-        .btn-daftar {
-            background: linear-gradient(90deg, #1a73e8, #13b0ff);
-            color: white;
-            padding: 15px 35px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            transition: .3s;
-            display: inline-block;
-        }
-
-        .btn-daftar:hover {
-            transform: translateY(-3px);
-        }
-
-        .hero-image {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-        }
-
-        .circle {
-            width: 450px;
-            height: 450px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .circle img {
-            width: 70%;
-        }
-
-        /* ================= FITUR ================= */
-        .fitur {
-            padding: 80px 8%;
-            background: #ffffff;
-        }
-
-        .fitur-box {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 70px;
-        }
-
-        .card {
-            background: #001d3d;
-            color: white;
-            padding: 35px;
-            border-radius: 20px;
-            transition: .3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card h3 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: #13b0ff;
-        }
-
-        .fitur-title {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .fitur-title h2 {
-            font-size: 50px;
-            margin-bottom: 20px;
-        }
-
-        .fitur-title p {
-            color: #666;
-            max-width: 850px;
-            margin: auto;
-            line-height: 1.8;
-        }
-
-        .fitur-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 50px;
-        }
-
-        .fitur-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-weight: 600;
-        }
-
-        .fitur-icon {
-            width: 50px;
-            height: 50px;
-            background: #001d3d;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        /* ================= PAKET ================= */
-        .paket {
-            background: linear-gradient(135deg, #00152e, #002b59);
-            color: white;
-            padding: 90px 8%;
-        }
-
-        .paket-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 40px;
-            flex-wrap: wrap;
-        }
-
-        .paket-text {
-            flex: 1;
-        }
-
-        .paket-text h2 {
-            font-size: 54px;
-            margin-bottom: 20px;
-        }
-
-        .paket-text p {
-            line-height: 1.8;
-            color: #d9d9d9;
-            margin-bottom: 20px;
-        }
-
-        .paket-text h4 {
-            margin-bottom: 25px;
-            color: #13b0ff;
-        }
-
-        .btn-detail {
-            background: #1a73e8;
-            color: white;
-            padding: 12px 28px;
-            border-radius: 8px;
-            display: inline-block;
-            font-weight: 600;
-        }
-
-        .paket-image {
-            flex: 1;
-            text-align: center;
-        }
-
-        .paket-image img {
-            width: 350px;
-            max-width: 100%;
-        }
-
-        /* ================= FOOTER ================= */
-        footer {
-            background: #00152e;
-            color: white;
-            padding: 70px 8% 40px;
-        }
-
-        .footer-top {
-            background: linear-gradient(90deg, #001d3d, #13b0ff);
-            padding: 40px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 60px;
-            gap: 20px;
-        }
-
-        .footer-top h2 {
-            margin-bottom: 10px;
-        }
-
-        .footer-btn {
-            background: white;
-            color: #1a73e8;
-            padding: 15px 35px;
-            border-radius: 10px;
-            font-weight: 700;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-        }
-
-        .footer-grid h4 {
-            margin-bottom: 15px;
-            color: #13b0ff;
-        }
-
-        .footer-grid p,
-        .footer-grid a {
-            color: #d0d0d0;
-            line-height: 1.9;
-            display: block;
-        }
-
-        .copyright {
-            text-align: center;
-            margin-top: 50px;
-            color: #aaa;
-            font-size: 14px;
-        }
-
-        /* ================= RESPONSIVE ================= */
-        @media(max-width: 900px) {
-            .hero {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .hero-text h1 {
-                font-size: 48px;
-            }
-
-            .circle {
-                width: 320px;
-                height: 320px;
-            }
-    .navbar{
-        padding:20px 5%;
-        flex-wrap:wrap;
-    }
-
-    /* tombol hamburger muncul */
-    .hamburger{
-        display:flex;
-    }
-
-    /* menu mobile */
-    .nav-menu{
-        width:100%;
-        display:none;
-        flex-direction:column;
-        align-items:flex-start;
-        gap:5px;
-        margin-top:20px;
-        background:#fff;
-    padding:20px 0;
-    }
-
-    .nav-menu.active{
-        display:flex;
-    }
-
-    .nav-menu a{
-        width:100%;
-        padding:12px 0;
-    }
-
-    /* dropdown mobile */
-    .dropdown{
-        width:100%;
-    }
-
-    .dropdown-menu{
-        position:static;
-        display:none;
-        box-shadow:none;
-        padding-left:15px;
-        margin-top:5px;
-    }
-
-    .dropdown.active .dropdown-menu{
-        display:block;
-    }
-
-    .btn-login{
-        display:inline-block;
-        margin-top:10px;
-           width:100%;
+.daftar-baru{
     text-align:center;
+    margin-top:25px;
+}
+
+.daftar-baru a{
+    color:#1a73e8;
+    font-weight:700;
+    text-decoration:none;
+}
+
+.info-box{
+    margin-top:30px;
+    background:#eef5ff;
+    padding:20px;
+    border-radius:12px;
+    font-size:14px;
+    line-height:1.8;
+}
+
+.alert-danger {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+@media(max-width:900px){
+    .container{
+        grid-template-columns:1fr;
     }
-
-
-            .fitur-title h2,
-            .paket-text h2 {
-                font-size: 36px;
-            }
-        }
-
-    </style>
+    .left{
+        text-align:center;
+    }
+    .left h1{
+        font-size:38px;
+    }
+}
+</style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="logo">
-            <div class="logo-circle">
-    <img src="asset/logo ISP.svg" alt="Logo ISP">
+<div class="container">
+    <div class="left">
+        <h1>Login Pelanggan</h1>
+        <p>
+            Jika sebelumnya Anda sudah pernah mendaftar,
+            silakan login menggunakan password yang anda buat sebelumnya dan nomor NIK yang terdaftar pada saat registrasi awal
+            untuk melakukan pendaftaran lokasi pemasangan baru.
+        </p>
+    </div>
+
+    <div class="right">
+        <div class="logo">GALA DATA</div>
+
+        <div class="form-box">
+            <h2>Selamat Datang</h2>
+            <p>Masuk Pelanggan</p>
+
+            <!-- MENAMPILKAN ERROR JIKA LOGIN GAGAL -->
+            <?php if(!empty($error)): ?>
+                <div class="alert-danger"><?= $error; ?></div>
+            <?php endif; ?>
+
+            <!-- PERBAIKAN: Action dikosongkan agar memproses di file ini -->
+            <form action="" method="POST">
+
+                <div class="input-box">
+                    <label>NIK</label>
+                    <!-- PERBAIKAN: name diubah menjadi no_nik sesuai PHP -->
+                    <input 
+                        type="text" 
+                        name="no_nik"
+                        placeholder="Masukkan NIK pada saat registrasi"
+                        required
+                    >
+                </div>
+
+                <div class="input-box">
+                    <label>Password</label>
+                    <!-- PERBAIKAN: name diubah menjadi password (huruf kecil) -->
+                    <input 
+                        type="password" 
+                        name="password"
+                        placeholder="Password pada saat registrasi"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn-login">Login</button>
+            </form>
+
+            <div class="daftar-baru">
+                Belum pernah daftar?
+                <a href="isidatapelangganbaru.php">Daftar Pelanggan Baru</a>
+            </div>
+
+            <div class="info-box">
+                <strong>Pelanggan Lama:</strong><br>
+                Login untuk menambah alamat pemasangan baru
+                tanpa perlu mengisi ulang data diri lengkap.
+            </div>
+        </div>
+    </div>
 </div>
-            <div>
-                <h2>GALA DATA</h2>
-                <span>BEST SOLUTION FAST INTERNET</span>
-            </div>
-        </div>
-         <!-- HAMBURGER -->
-    <div class="hamburger" id="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-
-        <div class="nav-menu" id="navmenu">
-    <a href="index.php">Home</a>
-     <!-- DROPDOWN PAKET -->
-        <div class="dropdown">
-            <a href="#">Paket Harga ▾</a>
-
-            <div class="dropdown-menu">
-                <a href="pakethome.php">Paket Rumah</a>
-                <a href="paketbisnis.php">Paket Bisnis</a>
-            </div>
-        </div>
-
-        <!-- DROPDOWN BANTUAN -->
-        <div class="dropdown">
-            <a href="#">Bantuan ▾</a>
-
-            <div class="dropdown-menu">
-                <a href="FAQ.php">FAQ</a>
-            </div>
-        </div>
-    <a href="hubungi_kami.php">Hubungi Kami</a>
-
-        <a href="loginadmin.php" class="btn-login">Login Admin</a>
-    </div>
-    </nav>
-
-    <script>
-
-/* ================= HAMBURGER ================= */
-const hamburger = document.getElementById("hamburger");
-const navMenu = document.getElementById("navmenu");
-
-hamburger.addEventListener("click", () => {
-    navMenu.classList.toggle("active");
-});
-
-/* ================= DROPDOWN MOBILE ================= */
-const dropdowns = document.querySelectorAll(".dropdown");
-
-dropdowns.forEach(dropdown => {
-    dropdown.addEventListener("click", function(e){
-
-        // hanya untuk mobile
-        if(window.innerWidth <= 900){
-
-            e.stopPropagation();
-
-            dropdowns.forEach(item => {
-                if(item !== dropdown){
-                    item.classList.remove("active");
-                }
-            });
-
-            dropdown.classList.toggle("active");
-        }
-    });
-});
-
-</script>
-
-    <!-- HERO -->
-    <section class="hero">
-        <div class="hero-text">
-            <h5>GRATIS PEMASANGAN</h5>
-
-            <h1>
-                Solusi Terbaik <br>
-                Internet Cepat!
-            </h1>
-
-            <p>
-                Yuk, daftar di GALA DATA sekarang! Rasakan internet super cepat
-                dengan harga yang ramah di kantong.
-            </p>
-
-            <small>
-                Jam kerja: 09.00 WIB – 17.00 WIB. <br>
-                Pendaftaran malam akan dipasang besok pagi.
-            </small>
-
-            <!-- Tombol menuju form pendaftaran -->
-            <a href="loginpelanggan.php" class="btn-daftar">
-                Daftar Sekarang!
-            </a>
-        </div>
-
-        <div class="hero-image">
-            <div class="circle">
-                <img src="asset/inde.png">
-            </div>
-        </div>
-    </section>
-
-
-    <!-- FITUR -->
-    <section class="fitur" id="bantuan">
-
-        <div class="fitur-box">
-            <div class="card">
-                <h3>Paket Harga</h3>
-                <p>Pilihan paket internet cepat sesuai kebutuhan rumah dan bisnis.</p>
-            </div>
-
-            <div class="card">
-                <h3>Bantuan</h3>
-                <p>Layanan bantuan pelanggan aktif untuk membantu kebutuhan Anda.</p>
-            </div>
-
-            <div class="card">
-                <h3>Hubungi Kami</h3>
-                <p>Hubungi customer service kami untuk informasi pemasangan.</p>
-            </div>
-        </div>
-
-
-        <div class="fitur-title">
-            <h2>Terkoneksi Dengan Internet Yang Tepat & Cepat</h2>
-
-            <p>
-                Kami provider internet dan wifi rumah yang memahami kebutuhan Anda.
-                Kini bukan hanya internet yang cepat tapi juga dengan fitur lengkap
-                dan harga yang murah.
-            </p>
-        </div>
-
-
-        <div class="fitur-list">
-            <div class="fitur-item">
-                <div class="fitur-icon">🌐</div>
-                <span>100% Fiber Optic</span>
-            </div>
-
-            <div class="fitur-item">
-                <div class="fitur-icon">📶</div>
-                <span>Modern Wi-Fi</span>
-            </div>
-
-            <div class="fitur-item">
-                <div class="fitur-icon">∞</div>
-                <span>Tanpa Kuota</span>
-            </div>
-
-            <div class="fitur-item">
-                <div class="fitur-icon">🎬</div>
-                <span>Premium Channel</span>
-            </div>
-
-            <div class="fitur-item">
-                <div class="fitur-icon">📺</div>
-                <span>TV Apps</span>
-            </div>
-
-            <div class="fitur-item">
-                <div class="fitur-icon">▶</div>
-                <span>Video On Demand</span>
-            </div>
-        </div>
-    </section>
-
-
-    <!-- WIFI BASIC -->
-    <section class="paket" id="paket">
-        <div class="paket-content">
-            <div class="paket-text">
-                <h2>WIFI BASIC HOME</h2>
-
-                <p>
-                    Internet anti lelet untuk keluarga dengan WiFi Basic Home.
-                    Belajar online lancar, scrolling medsos makin kencang.
-                </p>
-
-                <h4>#Gratis Pemasangan — Internet Unlimited</h4>
-
-                <a href="pakethome.php" class="btn-detail">Lihat Detail</a>
-            </div>
-
-            <div class="paket-image">
-                <img src="asset/homepaket.svg">
-            </div>
-        </div>
-    </section>
-
-
-    <!-- WIFI PREMIUM -->
-    <section class="paket">
-        <div class="paket-content">
-            <div class="paket-text">
-                <h2>WIFI PREMIUM BISNIS</h2>
-
-                <p>
-                    Koneksi stabil adalah kunci profesionalitas.
-                    WiFi Premium Bisnis hadir dengan layanan Dedicated Speed
-                    dan bantuan teknis 24/7.
-                </p>
-
-                <h4>#Gratis Pemasangan — Internet Unlimited</h4>
-
-                <a href="paketbisnis.php" class="btn-detail">Lihat Detail</a>
-            </div>
-
-            <div class="paket-image">
-                <img src="asset/basic.svg">
-            </div>
-        </div>
-    </section>
-
-
-    <!-- FOOTER -->
-    <footer id="kontak">
-
-        <div class="footer-top">
-            <div>
-                <h2>Apakah anda butuh bantuan?</h2>
-                <p>
-                    Kami akan memberikan informasi detail tentang layanan dan produk unggulan kami.
-                </p>
-            </div>
-
-            <a href="#" class="footer-btn">Hubungi Kami</a>
-        </div>
-
-
-        <div class="footer-grid">
-            <div>
-                <h4>PAKET & HARGA</h4>
-                <a href="#">Stream</a>
-                <a href="#">Stream+</a>
-                <a href="#">Installation</a>
-            </div>
-
-            <div>
-                <h4>PELANGGAN</h4>
-                <a href="#">Daftar</a>
-                <a href="#">Masuk</a>
-                <a href="#">Hubungi Kami</a>
-            </div>
-
-            <div>
-                <h4>INFO</h4>
-                <a href="#">Promo</a>
-               <!-- <a href="#">Info Cara Bayar</a> -->
-                <a href="#">FAQ</a>
-            </div>
-
-            <div>
-                <h4>ALAMAT</h4>
-                <p>
-                    Banyuwangi, Jawa Timur <br>
-                    Indonesia
-                </p>
-            </div>
-        </div>
-
-        <div class="copyright">
-            © 2025 GalaData.ID Home
-        </div>
-    </footer>
 
 </body>
-</html>
-
