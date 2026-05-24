@@ -90,7 +90,6 @@ $total_gangguan    = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM monit
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pengaturan – Gala Data</title>
@@ -99,7 +98,6 @@ $total_gangguan    = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM monit
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/4ad0d5a3b2.js" crossorigin="anonymous"></script>
     <style>
-        /* CSS Tambahan khusus agar form di dalam table-container rapi layaknya tabel */
         .box-pengaturan {
             background: #fff;
             padding: 24px;
@@ -127,8 +125,7 @@ $total_gangguan    = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM monit
             border: 1.5px solid #dde3f0;
             border-radius: 8px;
             font-family: 'Poppins', sans-serif;
-            /* DIUBAH KE 16px: Mencegah iOS/Android auto-zoom saat user klik/ketik di input form */
-            font-size: 16px; 
+            font-size: 14px;
             color: #333;
             outline: none;
             box-sizing: border-box;
@@ -172,6 +169,21 @@ $total_gangguan    = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM monit
             max-width: 650px;
         }
         .topbar-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+        /* FIX 2: FORCE CSS INPUT DI MOBILE MINIMAL 16PX BIAR SAFARI ADEM AYEM */
+        @media screen and (max-width: 768px) {
+            input[type="text"], 
+            input[type="password"], 
+            input[type="number"], 
+            input[type="email"], 
+            select, 
+            textarea {
+                font-size: 16px !important;
+            }
+        }
+        .form-tabel input:focus {
+            font-size: 16px !important;
+        }
     </style>
 </head>
 <body>
@@ -198,6 +210,7 @@ $total_gangguan    = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM monit
             <i class="fa-solid fa-right-from-bracket"></i> <a href="logout.php" style="color: inherit; text-decoration: none;">Logout</a>
         </div>
     </div>
+
     <div class="main-content">
 
         <div class="topbar">
@@ -291,6 +304,32 @@ $total_gangguan    = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM monit
 
     </div>
 </div>
+
+<script>
+    document.addEventListener('touchstart', function (event) {
+        if (event.touches.length > 1) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        let now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+
+    document.querySelectorAll('input, select, textarea').forEach(function(el) {
+        el.addEventListener('focus', function() {
+            let meta = document.querySelector('meta[name="viewport"]');
+            if (meta) {
+                meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
