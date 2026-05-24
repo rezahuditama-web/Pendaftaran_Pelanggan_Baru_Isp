@@ -2,10 +2,10 @@
 session_start();
 
 // Kalau sudah login sebagai pelanggan, langsung ke form pendaftaran
-if (isset($_SESSION['id_pelanggan'])) {
-    header("Location: isidatapelangganlama.php");
-    exit;
-}
+// if (isset($_SESSION['id_pelanggan'])) {
+//     header("Location: isidatapelangganlama.php");
+//     exit;
+// }
 
 include 'koneksi.php';
 
