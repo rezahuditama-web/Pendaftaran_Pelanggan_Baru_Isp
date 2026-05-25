@@ -46,7 +46,7 @@ $query = mysqli_query($koneksi,"
     SELECT
         pm.id_pemasangan,
         pm.id_pendaftaran,
-        pm.alamat_pemasangan,
+        pp.alamat_pemasangan,
         pm.tanggal_pemasangan,
         pm.status_pemasangan,
         p.nama_pelanggan,
@@ -64,7 +64,7 @@ $query = mysqli_query($koneksi,"
     JOIN pelanggan p ON pp.id_pelanggan = p.id_pelanggan
     JOIN paket pk ON pp.id_paket = pk.id_paket
     WHERE p.nama_pelanggan LIKE '%$cari%'
-    OR pm.alamat_pemasangan LIKE '%$cari%'
+    OR pp.alamat_pemasangan LIKE '%$cari%'
     ORDER BY pm.id_pemasangan DESC
 ");
 
