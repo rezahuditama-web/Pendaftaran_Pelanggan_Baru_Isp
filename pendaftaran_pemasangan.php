@@ -27,7 +27,7 @@ $total_pemasangan = mysqli_num_rows(
 );
 
 $total_monitoring = mysqli_num_rows(
-    mysqli_query($koneksi, "SELECT * FROM monitoring WHERE status_koneksi='gangguan'")
+    mysqli_query($koneksi, "SELECT * FROM monitoring WHERE status_koneksi='offline'")
 );
 
 /* ======================================
@@ -53,12 +53,10 @@ if (isset($_POST['verifikasi'])) {
                 mysqli_query($koneksi, "
                     INSERT INTO pemasangan (
                         id_pendaftaran,
-                        alamat_pemasangan,
                         tanggal_pemasangan,
                         status_pemasangan
                     ) VALUES (
                         '$id_pendaftaran',
-                        'Belum Ditentukan',
                         CURDATE(),
                         'proses'
                     )
