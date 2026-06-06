@@ -8,19 +8,54 @@ if(isset($_GET['cari'])){
 
 /* ======================================
    UPDATE STATUS PEMASANGAN
+   + AUTO INSERT MONITORING jika terpasang
 ====================================== */
 if(isset($_POST['update_status'])){
-    $id_pemasangan     = $_POST['id_pemasangan'];
-    $status_pemasangan = $_POST['status_pemasangan'];
-
+    $id_pemasangan     = mysqli_real_escape_string($koneksi, $_POST['id_pemasangan']);
+    $status_pemasangan = mysqli_real_escape_string($koneksi, $_POST['status_pemasangan']);
+ 
     $query_update = mysqli_query($koneksi,"
         UPDATE pemasangan
         SET status_pemasangan='$status_pemasangan'
         WHERE id_pemasangan='$id_pemasangan'
     ");
-
+ 
     if($query_update){
-        echo "<script>alert('Status pemasangan berhasil diupdate'); window.location='pemasangan.php';</script>";
+        // Jika status diubah ke "terpasang", otomatis tambah ke monitoring
+        if($status_pemasangan == 'terpasang'){
+            $tanggal_hari_ini = date('Y-m-d');
+ 
+            // Ambil id_admin pertama yang tersedia
+            $res_admin = mysqli_query($koneksi,"SELECT id_admin FROM admin ORDER BY id_admin ASC LIMIT 1");
+            $id_admin  = 1; // default
+            if($res_admin && mysqli_num_rows($res_admin) > 0){
+                $row_admin = mysqli_fetch_assoc($res_admin);
+                $id_admin  = $row_admin['id_admin'];
+            }
+ 
+            // Cek apakah sudah ada monitoring untuk id_pemasangan ini dengan status online
+            $cek = mysqli_query($koneksi,"
+                SELECT id_monitoring FROM monitoring
+                WHERE id_pemasangan='$id_pemasangan' AND status_koneksi='online'
+                LIMIT 1
+            ");
+ 
+            if(mysqli_num_rows($cek) == 0){
+                $insert_monitoring = mysqli_query($koneksi,"
+                    INSERT INTO monitoring (id_admin, id_pemasangan, tanggal_cek, status_koneksi, keterangan)
+                    VALUES ('$id_admin','$id_pemasangan','$tanggal_hari_ini','online','Pemasangan baru selesai')
+                ");
+                if($insert_monitoring){
+                    echo "<script>alert('Status pemasangan berhasil diupdate & data monitoring berhasil ditambahkan'); window.location='pemasangan.php';</script>";
+                } else {
+                    echo "<script>alert('Status diupdate tapi gagal tambah monitoring: " . mysqli_error($koneksi) . "'); window.location='pemasangan.php';</script>";
+                }
+            } else {
+                echo "<script>alert('Status pemasangan berhasil diupdate (monitoring sudah ada)'); window.location='pemasangan.php';</script>";
+            }
+        } else {
+            echo "<script>alert('Status pemasangan berhasil diupdate'); window.location='pemasangan.php';</script>";
+        }
     } else {
         echo "<script>alert('Gagal: " . mysqli_error($koneksi) . "');</script>";
     }
@@ -33,7 +68,7 @@ $total_pelanggan   = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pelang
 $total_pendaftaran = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pendaftaran_pemasangan"));
 $total_pending     = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pendaftaran_pemasangan WHERE status_verifikasi='pending'"));
 $total_selesai     = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pemasangan WHERE status_pemasangan='terpasang'"));
-$total_monitoring  = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM monitoring WHERE status_koneksi='gangguan'"));
+$total_monitoring  = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM monitoring WHERE status_koneksi='offline'"));
 
 /* ======================================
    AMBIL DATA PEMASANGAN
