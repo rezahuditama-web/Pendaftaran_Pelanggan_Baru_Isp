@@ -10,10 +10,10 @@ if(isset($_GET['cari'])){
    TAMBAH MONITORING
 ====================================== */
 if(isset($_POST['tambah'])){
-    $id_pemasangan  = $_POST['id_pemasangan'];
-    $id_admin       = $_POST['id_admin'];
-    $tanggal_cek    = $_POST['tanggal_cek'];
-    $status_koneksi = $_POST['status_koneksi'];
+    $id_pemasangan  = mysqli_real_escape_string($koneksi, $_POST['id_pemasangan']);
+    $id_admin       = mysqli_real_escape_string($koneksi, $_POST['id_admin']);
+    $tanggal_cek    = mysqli_real_escape_string($koneksi, $_POST['tanggal_cek']);
+    $status_koneksi = mysqli_real_escape_string($koneksi, $_POST['status_koneksi']);
     $keterangan     = mysqli_real_escape_string($koneksi, $_POST['keterangan']);
 
     $q = mysqli_query($koneksi,"
@@ -24,44 +24,53 @@ if(isset($_POST['tambah'])){
     if($q){
         echo "<script>alert('Data monitoring berhasil ditambahkan'); window.location='monitoring.php';</script>";
     } else {
-        echo "<script>alert('Gagal: " . mysqli_error($koneksi) . "');</script>";
+        echo "<script>alert('Gagal tambah: " . addslashes(mysqli_error($koneksi)) . "');</script>";
     }
+    exit;
 }
 
 /* ======================================
-   UPDATE MONITORING
+   UPDATE MONITORING  ← PERBAIKAN: pakai POST action
 ====================================== */
 if(isset($_POST['update'])){
-    $id_monitoring  = $_POST['id_monitoring'];
-    $status_koneksi = $_POST['status_koneksi'];
+    $id_monitoring  = mysqli_real_escape_string($koneksi, $_POST['id_monitoring']);
+    $id_pemasangan  = mysqli_real_escape_string($koneksi, $_POST['id_pemasangan']);
+    $id_admin       = mysqli_real_escape_string($koneksi, $_POST['id_admin']);
+    $status_koneksi = mysqli_real_escape_string($koneksi, $_POST['status_koneksi']);
     $keterangan     = mysqli_real_escape_string($koneksi, $_POST['keterangan']);
-    $tanggal_cek    = $_POST['tanggal_cek'];
+    $tanggal_cek    = mysqli_real_escape_string($koneksi, $_POST['tanggal_cek']);
 
     $q = mysqli_query($koneksi,"
         UPDATE monitoring
-        SET 
-            status_koneksi='$status_koneksi',
-            keterangan='$keterangan',
-            tanggal_cek='$tanggal_cek'
-        WHERE id_monitoring='$id_monitoring'
+        SET
+            id_pemasangan  = '$id_pemasangan',
+            id_admin       = '$id_admin',
+            status_koneksi = '$status_koneksi',
+            keterangan     = '$keterangan',
+            tanggal_cek    = '$tanggal_cek'
+        WHERE id_monitoring = '$id_monitoring'
     ");
 
     if($q){
         echo "<script>alert('Data monitoring berhasil diupdate'); window.location='monitoring.php';</script>";
     } else {
-        echo "<script>alert('Gagal: " . mysqli_error($koneksi) . "');</script>";
+        echo "<script>alert('Gagal update: " . addslashes(mysqli_error($koneksi)) . "');</script>";
     }
+    exit;
 }
 
 /* ======================================
-   HAPUS MONITORING
+   HAPUS MONITORING  ← PERBAIKAN: pakai POST
 ====================================== */
-if(isset($_GET['hapus'])){
-    $id_monitoring = $_GET['hapus'];
+if(isset($_POST['hapus'])){
+    $id_monitoring = mysqli_real_escape_string($koneksi, $_POST['id_monitoring']);
     $q = mysqli_query($koneksi,"DELETE FROM monitoring WHERE id_monitoring='$id_monitoring'");
     if($q){
         echo "<script>alert('Data monitoring berhasil dihapus'); window.location='monitoring.php';</script>";
+    } else {
+        echo "<script>alert('Gagal hapus: " . addslashes(mysqli_error($koneksi)) . "');</script>";
     }
+    exit;
 }
 
 /* ======================================
@@ -82,7 +91,7 @@ $query = mysqli_query($koneksi,"
         p.nama_pelanggan,
         p.alamat_domisili,
         pk.nama_paket,
-        pm.alamat_pemasangan,
+        pp.alamat_pemasangan,
         pm.status_pemasangan
     FROM monitoring m
     JOIN pemasangan pm ON m.id_pemasangan = pm.id_pemasangan
@@ -100,20 +109,23 @@ if(!$query){
 }
 
 /* ======================================
-   AMBIL DATA PEMASANGAN UNTUK DROPDOWN
+   DROPDOWN PEMASANGAN & ADMIN
 ====================================== */
 $list_pemasangan = mysqli_query($koneksi,"
-    SELECT pm.id_pemasangan, p.nama_pelanggan, pm.alamat_pemasangan
+    SELECT pm.id_pemasangan, p.nama_pelanggan, pp.alamat_pemasangan
     FROM pemasangan pm
     JOIN pendaftaran_pemasangan pp ON pm.id_pendaftaran = pp.id_pendaftaran
     JOIN pelanggan p ON pp.id_pelanggan = p.id_pelanggan
     ORDER BY pm.id_pemasangan DESC
 ");
 
-/* ======================================
-   AMBIL DATA ADMIN UNTUK DROPDOWN
-====================================== */
 $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC");
+
+/* Simpan rows ke array supaya bisa dipakai ulang di modal edit */
+$rows_monitoring = [];
+while($r = mysqli_fetch_assoc($query)){
+    $rows_monitoring[] = $r;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -126,8 +138,8 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
     <script src="https://kit.fontawesome.com/4ad0d5a3b2.js" crossorigin="anonymous"></script>
     <style>
         /* STATUS BADGE */
-        .status-online   { background:#dcfce7; color:#16a34a; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-        .status-gangguan { background:#fee2e2; color:#dc2626; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+        .status-online  { background:#dcfce7; color:#16a34a; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+        .status-offline { background:#fee2e2; color:#dc2626; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
 
         /* MODAL */
         .modal {
@@ -135,6 +147,7 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
             background: rgba(0,0,0,0.5); z-index: 999;
             align-items: center; justify-content: center; padding: 20px;
         }
+        .modal.active { display: flex; }
         .modal-content {
             background: #fff; border-radius: 14px;
             padding: 32px 36px; width: 100%; max-width: 520px;
@@ -161,6 +174,7 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
             border: 1.5px solid #dde3f0; border-radius: 8px;
             font-family: 'Poppins', sans-serif; font-size: 14px;
             color: #333; outline: none; transition: border-color .2s;
+            box-sizing: border-box;
         }
         .modal-content input:focus,
         .modal-content select:focus,
@@ -184,22 +198,22 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
         .divider { border: none; border-top: 1px solid #e8edf5; margin: 16px 0; }
         .section-title { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
 
-        /* TOMBOL */
+        /* TOMBOL AKSI */
         .detail-btn {
             background: #1a73e8; color: #fff; border: none;
-            padding: 6px 14px; border-radius: 6px; font-size: 13px;
-            font-weight: 500; cursor: pointer; margin-right: 4px; transition: background .2s;
+            padding: 6px 12px; border-radius: 6px; font-size: 12px;
+            font-weight: 500; cursor: pointer; margin-right: 3px; transition: background .2s;
         }
         .detail-btn:hover { background: #0d5bc7; }
         .btn-edit {
             background: #fef3c7; color: #d97706; border: none;
-            padding: 6px 14px; border-radius: 6px; font-size: 13px;
-            font-weight: 500; cursor: pointer; margin-right: 4px; transition: background .2s;
+            padding: 6px 12px; border-radius: 6px; font-size: 12px;
+            font-weight: 500; cursor: pointer; margin-right: 3px; transition: background .2s;
         }
         .btn-edit:hover { background: #fde68a; }
         .btn-hapus {
             background: #fee2e2; color: #dc2626; border: none;
-            padding: 6px 14px; border-radius: 6px; font-size: 13px;
+            padding: 6px 12px; border-radius: 6px; font-size: 12px;
             font-weight: 500; cursor: pointer; transition: background .2s;
         }
         .btn-hapus:hover { background: #fca5a5; }
@@ -234,7 +248,7 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
             <li><i class="fa-solid fa-hammer"></i><a href="pemasangan.php">Pemasangan</a></li>
             <li class="active"><i class="fa-solid fa-clipboard-check"></i><a href="monitoring.php">Monitoring</a></li>
             <li><i class="fa-solid fa-globe"></i><a href="setting_paket.php">Setting Paket</a></li>
-            <li> <i class="fa-solid fa-envelope"></i><a href="contact.php">Pesan Masuk</a></li>
+            <li><i class="fa-solid fa-envelope"></i><a href="contact.php">Pesan Masuk</a></li>
             <li><i class="fa-solid fa-gear"></i><a href="setting_admin.php">Pengaturan</a></li>
         </ul>
         <div class="logout">
@@ -257,10 +271,10 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
                             <i class="fa-solid fa-magnifying-glass"></i>
                             <input type="text" name="cari"
                                    placeholder="Cari Nama Pelanggan / Status"
-                                   value="<?= $cari; ?>">
+                                   value="<?= htmlspecialchars($cari); ?>">
                         </div>
                     </form>
-                    <button class="btn-tambah" onclick="openModalTambah()">
+                    <button type="button" class="btn-tambah" onclick="openModalTambah()">
                         <i class="fa-solid fa-plus"></i> Tambah Monitoring
                     </button>
                 </div>
@@ -306,10 +320,15 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
                     </tr>
                 </thead>
                 <tbody>
-                <?php
-                $jumlah = mysqli_num_rows($query);
-                while($row = mysqli_fetch_assoc($query)):
-                ?>
+                <?php if(count($rows_monitoring) == 0): ?>
+                <tr>
+                    <td colspan="7" style="text-align:center; color:#aaa; padding:32px;">
+                        <i class="fa-solid fa-box-open" style="font-size:24px; margin-bottom:8px; display:block;"></i>
+                        Belum ada data monitoring.
+                    </td>
+                </tr>
+                <?php else: ?>
+                <?php foreach($rows_monitoring as $row): ?>
                 <tr>
                     <td><?= $row['id_monitoring']; ?></td>
                     <td><?= htmlspecialchars($row['nama_pelanggan']); ?></td>
@@ -319,108 +338,104 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
                         <?php if($row['status_koneksi'] == 'online'): ?>
                             <span class="status-online"><i class="fa-solid fa-circle-check"></i> Online</span>
                         <?php else: ?>
-                            <span class="status-gangguan"><i class="fa-solid fa-circle-xmark"></i> Offline</span>
+                            <span class="status-offline"><i class="fa-solid fa-circle-xmark"></i> Offline</span>
                         <?php endif; ?>
                     </td>
                     <td><?= htmlspecialchars($row['keterangan']); ?></td>
-                    <td>
-                        <button class="detail-btn" onclick="openModalDetail<?= $row['id_monitoring']; ?>()">
+                    <td style="white-space:nowrap;">
+                        <!-- DETAIL -->
+                        <button type="button" class="detail-btn"
+                            onclick="openModalDetail(
+                                '<?= $row['id_monitoring']; ?>',
+                                '<?= htmlspecialchars($row['nama_pelanggan'], ENT_QUOTES); ?>',
+                                '<?= htmlspecialchars($row['nama_paket'], ENT_QUOTES); ?>',
+                                '<?= htmlspecialchars($row['alamat_pemasangan'], ENT_QUOTES); ?>',
+                                '<?= $row['tanggal_cek']; ?>',
+                                '<?= $row['status_koneksi']; ?>',
+                                '<?= htmlspecialchars($row['keterangan'], ENT_QUOTES); ?>',
+                                '<?= $row['id_pemasangan']; ?>',
+                                '<?= $row['id_admin']; ?>'
+                            )">
                             <i class="fa-solid fa-eye"></i> Detail
                         </button>
-                        <button class="btn-edit" onclick="openModalEdit(
-                            '<?= $row['id_monitoring']; ?>',
-                            '<?= $row['id_pemasangan']; ?>',
-                            '<?= $row['id_admin']; ?>',
-                            '<?= $row['tanggal_cek']; ?>',
-                            '<?= $row['status_koneksi']; ?>',
-                            '<?= htmlspecialchars($row['keterangan'], ENT_QUOTES); ?>'
-                        )">
+                        <!-- EDIT -->
+                        <button type="button" class="btn-edit"
+                            onclick="openModalEdit(
+                                '<?= $row['id_monitoring']; ?>',
+                                '<?= $row['id_pemasangan']; ?>',
+                                '<?= $row['id_admin']; ?>',
+                                '<?= $row['tanggal_cek']; ?>',
+                                '<?= $row['status_koneksi']; ?>',
+                                '<?= htmlspecialchars($row['keterangan'], ENT_QUOTES); ?>'
+                            )">
                             <i class="fa-solid fa-pen"></i> Edit
                         </button>
-                        <button class="btn-hapus" onclick="konfirmasiHapus('<?= $row['id_monitoring']; ?>')">
-                            <i class="fa-solid fa-trash"></i> Hapus
-                        </button>
+                        <!-- HAPUS via form POST -->
+                        <form method="POST" style="display:inline;"
+                              onsubmit="return confirm('Yakin ingin menghapus data monitoring ini?')">
+                            <input type="hidden" name="id_monitoring" value="<?= $row['id_monitoring']; ?>">
+                            <button type="submit" name="hapus" class="btn-hapus">
+                                <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
+                        </form>
                     </td>
                 </tr>
-
-                <!-- MODAL DETAIL -->
-                <div class="modal" id="modalDetail<?= $row['id_monitoring']; ?>">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModalDetail<?= $row['id_monitoring']; ?>()">&times;</span>
-                        <h2><i class="fa-solid fa-circle-info"></i> Detail Monitoring</h2>
-
-                        <p class="section-title"><i class="fa-solid fa-user"></i> Data Pelanggan</p>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <label>Nama Pelanggan</label>
-                                <p><?= htmlspecialchars($row['nama_pelanggan']); ?></p>
-                            </div>
-                            <div class="detail-item">
-                                <label>Paket</label>
-                                <p><?= htmlspecialchars($row['nama_paket']); ?></p>
-                            </div>
-                            <div class="detail-item full">
-                                <label>Alamat Pemasangan</label>
-                                <p><?= htmlspecialchars($row['alamat_pemasangan']); ?></p>
-                            </div>
-                        </div>
-
-                        <hr class="divider">
-
-                        <p class="section-title"><i class="fa-solid fa-wifi"></i> Status Koneksi</p>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <label>Tanggal Cek</label>
-                                <p><?= date('d M Y', strtotime($row['tanggal_cek'])); ?></p>
-                            </div>
-                            <div class="detail-item">
-                                <label>Status Koneksi</label>
-                                <p>
-                                <?php if($row['status_koneksi'] == 'online'): ?>
-                                    <span class="status-online">✓ Online</span>
-                                <?php else: ?>
-                                    <span class="status-gangguan">✗ Gangguan</span>
-                                <?php endif; ?>
-                                </p>
-                            </div>
-                            <div class="detail-item full">
-                                <label>Keterangan</label>
-                                <p><?= htmlspecialchars($row['keterangan']); ?></p>
-                            </div>
-                            <div class="detail-item">
-                                <label>ID Pemasangan</label>
-                                <p>#<?= $row['id_pemasangan']; ?></p>
-                            </div>
-                            <div class="detail-item">
-                                <label>ID Admin</label>
-                                <p>#<?= $row['id_admin']; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <script>
-                    function openModalDetail<?= $row['id_monitoring']; ?>(){
-                        document.getElementById('modalDetail<?= $row['id_monitoring']; ?>').style.display='flex';
-                    }
-                    function closeModalDetail<?= $row['id_monitoring']; ?>(){
-                        document.getElementById('modalDetail<?= $row['id_monitoring']; ?>').style.display='none';
-                    }
-                </script>
-
-                <?php endwhile; ?>
-
-                <?php if($jumlah == 0): ?>
-                <tr>
-                    <td colspan="7" style="text-align:center; color:#aaa; padding:32px;">
-                        <i class="fa-solid fa-box-open" style="font-size:24px; margin-bottom:8px; display:block;"></i>
-                        Belum ada data monitoring.
-                    </td>
-                </tr>
+                <?php endforeach; ?>
                 <?php endif; ?>
-
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<!-- ============================
+     MODAL DETAIL (1 modal, diisi JS)
+============================= -->
+<div class="modal" id="modalDetail">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modalDetail')">&times;</span>
+        <h2><i class="fa-solid fa-circle-info"></i> Detail Monitoring</h2>
+
+        <p class="section-title"><i class="fa-solid fa-user"></i> Data Pelanggan</p>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <label>Nama Pelanggan</label>
+                <p id="d_nama"></p>
+            </div>
+            <div class="detail-item">
+                <label>Paket</label>
+                <p id="d_paket"></p>
+            </div>
+            <div class="detail-item full">
+                <label>Alamat Pemasangan</label>
+                <p id="d_alamat"></p>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <p class="section-title"><i class="fa-solid fa-wifi"></i> Status Koneksi</p>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <label>Tanggal Cek</label>
+                <p id="d_tanggal"></p>
+            </div>
+            <div class="detail-item">
+                <label>Status Koneksi</label>
+                <p id="d_status"></p>
+            </div>
+            <div class="detail-item full">
+                <label>Keterangan</label>
+                <p id="d_keterangan"></p>
+            </div>
+            <div class="detail-item">
+                <label>ID Pemasangan</label>
+                <p id="d_id_pemasangan"></p>
+            </div>
+            <div class="detail-item">
+                <label>ID Admin</label>
+                <p id="d_id_admin"></p>
+            </div>
         </div>
     </div>
 </div>
@@ -430,14 +445,13 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
 ============================= -->
 <div class="modal" id="modalTambah">
     <div class="modal-content">
-        <span class="close" onclick="closeModalTambah()">&times;</span>
+        <span class="close" onclick="closeModal('modalTambah')">&times;</span>
         <h2><i class="fa-solid fa-plus"></i> Tambah Monitoring</h2>
         <form method="POST">
             <label class="form-label">Pelanggan / Pemasangan *</label>
             <select name="id_pemasangan" required>
                 <option value="">-- Pilih Pemasangan --</option>
                 <?php
-                // Reset pointer
                 mysqli_data_seek($list_pemasangan, 0);
                 while($pm = mysqli_fetch_assoc($list_pemasangan)):
                 ?>
@@ -461,7 +475,7 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
             </select>
 
             <label class="form-label">Tanggal Cek *</label>
-            <input type="date" name="tanggal_cek" value="<?= date('Y-m-d'); ?>" required/>
+            <input type="date" name="tanggal_cek" value="<?= date('Y-m-d'); ?>" required>
 
             <label class="form-label">Status Koneksi *</label>
             <select name="status_koneksi" required>
@@ -480,14 +494,14 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
 </div>
 
 <!-- ============================
-     MODAL EDIT MONITORING
+     MODAL EDIT MONITORING  (1 modal)
 ============================= -->
 <div class="modal" id="modalEdit">
     <div class="modal-content">
-        <span class="close" onclick="closeModalEdit()">&times;</span>
+        <span class="close" onclick="closeModal('modalEdit')">&times;</span>
         <h2><i class="fa-solid fa-pen"></i> Edit Monitoring</h2>
         <form method="POST">
-            <input type="hidden" name="id_monitoring" id="edit_id_monitoring"/>
+            <input type="hidden" name="id_monitoring" id="edit_id_monitoring">
 
             <label class="form-label">Pelanggan / Pemasangan *</label>
             <select name="id_pemasangan" id="edit_id_pemasangan" required>
@@ -516,7 +530,7 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
             </select>
 
             <label class="form-label">Tanggal Cek *</label>
-            <input type="date" name="tanggal_cek" id="edit_tanggal_cek" required/>
+            <input type="date" name="tanggal_cek" id="edit_tanggal_cek" required>
 
             <label class="form-label">Status Koneksi *</label>
             <select name="status_koneksi" id="edit_status_koneksi" required>
@@ -535,35 +549,53 @@ $list_admin = mysqli_query($koneksi,"SELECT * FROM admin ORDER BY id_admin ASC")
 </div>
 
 <script>
-    // MODAL TAMBAH
-    function openModalTambah(){ document.getElementById('modalTambah').style.display='flex'; }
-    function closeModalTambah(){ document.getElementById('modalTambah').style.display='none'; }
+/* ── Helper tutup modal ── */
+function closeModal(id){
+    document.getElementById(id).style.display = 'none';
+}
 
-    // MODAL EDIT
-    function openModalEdit(id, id_pemasangan, id_admin, tanggal, status, keterangan){
-        document.getElementById('edit_id_monitoring').value   = id;
-        document.getElementById('edit_id_pemasangan').value   = id_pemasangan;
-        document.getElementById('edit_id_admin').value        = id_admin;
-        document.getElementById('edit_tanggal_cek').value     = tanggal;
-        document.getElementById('edit_status_koneksi').value  = status;
-        document.getElementById('edit_keterangan').value      = keterangan;
-        document.getElementById('modalEdit').style.display    = 'flex';
-    }
-    function closeModalEdit(){ document.getElementById('modalEdit').style.display='none'; }
+/* ── MODAL TAMBAH ── */
+function openModalTambah(){
+    document.getElementById('modalTambah').style.display = 'flex';
+}
 
-    // HAPUS
-    function konfirmasiHapus(id){
-        if(confirm('Yakin ingin menghapus data monitoring ini?')){
-            window.location = 'monitoring.php?hapus=' + id;
-        }
+/* ── MODAL DETAIL ── */
+function openModalDetail(id, nama, paket, alamat, tgl, status, ket, idPem, idAdm){
+    document.getElementById('d_nama').textContent        = nama;
+    document.getElementById('d_paket').textContent       = paket;
+    document.getElementById('d_alamat').textContent      = alamat;
+    document.getElementById('d_tanggal').textContent     = tgl;
+    document.getElementById('d_keterangan').textContent  = ket;
+    document.getElementById('d_id_pemasangan').textContent = '#' + idPem;
+    document.getElementById('d_id_admin').textContent    = '#' + idAdm;
+
+    var statusEl = document.getElementById('d_status');
+    if(status === 'online'){
+        statusEl.innerHTML = "<span class='status-online'>✓ Online</span>";
+    } else {
+        statusEl.innerHTML = "<span class='status-offline'>✗ Offline</span>";
     }
 
-    // Tutup modal jika klik di luar
-    window.onclick = function(e){
-        if(e.target.classList.contains('modal')){
-            e.target.style.display = 'none';
-        }
+    document.getElementById('modalDetail').style.display = 'flex';
+}
+
+/* ── MODAL EDIT ── */
+function openModalEdit(id, idPem, idAdm, tgl, status, ket){
+    document.getElementById('edit_id_monitoring').value   = id;
+    document.getElementById('edit_id_pemasangan').value   = idPem;
+    document.getElementById('edit_id_admin').value        = idAdm;
+    document.getElementById('edit_tanggal_cek').value     = tgl;
+    document.getElementById('edit_status_koneksi').value  = status;
+    document.getElementById('edit_keterangan').value      = ket;
+    document.getElementById('modalEdit').style.display    = 'flex';
+}
+
+/* ── Tutup modal jika klik di luar ── */
+window.addEventListener('click', function(e){
+    if(e.target.classList.contains('modal')){
+        e.target.style.display = 'none';
     }
+});
 </script>
 
 </body>
