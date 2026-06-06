@@ -27,7 +27,7 @@ $total_pendaftaran = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pendaf
 $total_pending     = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pendaftaran_pemasangan WHERE status_verifikasi='pending'"));
 $total_terpasang   = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pemasangan WHERE status_pemasangan='terpasang'"));
 $total_pesan       = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM contact"));
-$total_gangguan    = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM monitoring WHERE status_koneksi='gangguan'"));
+$total_gangguan    = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM monitoring WHERE status_koneksi='offline'"));
 
 /* ======================================
    AMBIL DATA PESAN
