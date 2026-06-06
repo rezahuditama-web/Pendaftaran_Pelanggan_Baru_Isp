@@ -65,7 +65,7 @@ $total_pemasangan = mysqli_num_rows(
 $total_monitoring = mysqli_num_rows(
     mysqli_query($koneksi,
     "SELECT * FROM monitoring
-    WHERE status_koneksi='gangguan'")
+    WHERE status_koneksi='offline'")
 );
 
 ?>
