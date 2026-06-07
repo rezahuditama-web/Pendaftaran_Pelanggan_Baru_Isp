@@ -71,7 +71,7 @@ if(isset($_GET['hapus'])){
 $total_pelanggan = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pelanggan"));
 $total_pendaftaran = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pendaftaran_pemasangan"));
 $total_pending = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pendaftaran_pemasangan WHERE status_verifikasi='pending'"));
-$total_pemasangan = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pemasangan WHERE status_pemasangan='selesai'"));
+$total_pemasangan = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM pemasangan WHERE status_pemasangan='terpasang'"));
 $total_monitoring = mysqli_num_rows(mysqli_query($koneksi,"SELECT * FROM monitoring WHERE status_koneksi='offline'"));
 
 /* ======================================
@@ -255,7 +255,7 @@ $query = mysqli_query($koneksi,"
         </ul>
         <div class="logout">
             <i class="fa-solid fa-right-from-bracket"></i>
-            Logout
+             <a href="logout.php">Logout</a>
         </div>
     </div>
 
@@ -299,7 +299,7 @@ $query = mysqli_query($koneksi,"
             </div>
             <div class="card">
                 <div class="icon"><i class="fa-solid fa-hammer"></i></div>
-                <div><h3>Pemasangan</h3><h2><?= $total_pemasangan; ?></h2></div>
+                <div><h3>Terpasang</h3><h2><?= $total_pemasangan; ?></h2></div>
             </div>
             <div class="card">
                 <div class="icon"><i class="fa-solid fa-wifi"></i></div>
