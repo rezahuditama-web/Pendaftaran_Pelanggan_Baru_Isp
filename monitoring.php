@@ -252,7 +252,8 @@ while($r = mysqli_fetch_assoc($query)){
             <li><i class="fa-solid fa-gear"></i><a href="setting_admin.php">Pengaturan</a></li>
         </ul>
         <div class="logout">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <a href="logout.php">Logout</a>
         </div>
     </div>
 
