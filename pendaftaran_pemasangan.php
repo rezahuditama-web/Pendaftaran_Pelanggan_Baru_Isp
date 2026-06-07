@@ -83,7 +83,7 @@ $query_tabel = mysqli_query($koneksi, "
         p.nama_pelanggan,
         p.no_nik,
         p.no_hp,
-        p.alamat_domisili,
+        pp.alamat_pemasangan,
         p.foto_ktp,
         pk.nama_paket
     FROM pendaftaran_pemasangan pp
@@ -190,7 +190,8 @@ $query_tabel = mysqli_query($koneksi, "
             <li><i class="fa-solid fa-gear"></i><a href="setting_admin.php">Pengaturan</a></li>
         </ul>
         <div class="logout">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <a href="logout.php">Logout</a>
         </div>
     </div>
 
@@ -308,8 +309,8 @@ $query_tabel = mysqli_query($koneksi, "
                                 <p><?= htmlspecialchars($row['nama_paket']); ?></p>
                             </div>
                             <div class="detail-item full">
-                                <label>Alamat Domisili</label>
-                                <p><?= htmlspecialchars($row['alamat_domisili']); ?></p>
+                                <label>Alamat Pelanggan</label>
+                                <p><?= htmlspecialchars($row['alamat_pemasangan']); ?></p>
                             </div>
                         </div>
 
