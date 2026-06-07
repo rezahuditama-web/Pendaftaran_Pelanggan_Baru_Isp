@@ -228,14 +228,6 @@ while($row = mysqli_fetch_assoc($queryChart)) {
 
         </button>
 
-        <div class="search-box">
-
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-            <input type="text" placeholder="Cari Pelanggan">
-
-        </div>
-
     </div>
 
     <!-- <div class="profile">
@@ -317,7 +309,7 @@ while($row = mysqli_fetch_assoc($queryChart)) {
 
                 <div>
 
-                    <h3>Pemasangan</h3>
+                    <h3>Terpasang</h3>
 
                     <h2><?= $total_pemasangan; ?></h2>
 
