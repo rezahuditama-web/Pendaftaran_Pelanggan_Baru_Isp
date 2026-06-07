@@ -17,8 +17,9 @@ $data = mysqli_fetch_assoc($pelanggan);
 # HISTORI PEMASANGAN
 # =========================
 $riwayat = mysqli_query($koneksi, "
-SELECT 
-    pemasangan.alamat_pemasangan,
+SELECT
+    pelanggan.alamat_domisili,
+    pendaftaran_pemasangan.alamat_pemasangan,
     pemasangan.status_pemasangan,
     paket.nama_paket,
     paket.kecepatan
@@ -30,6 +31,9 @@ ON pemasangan.id_pendaftaran = pendaftaran_pemasangan.id_pendaftaran
 
 JOIN paket
 ON paket.id_paket = pendaftaran_pemasangan.id_paket
+
+jOIN pelanggan
+ON pelanggan.id_pelanggan = pendaftaran_pemasangan.id_pelanggan
 
 WHERE pendaftaran_pemasangan.id_pelanggan = '$id'
 ");
@@ -113,6 +117,8 @@ WHERE pendaftaran_pemasangan.id_pelanggan = '$id'
             <?php while($r = mysqli_fetch_assoc($riwayat)) { ?>
 
                 <tr>
+
+                    <td><?= $r['alamat_domisili']; ?></td>
 
                     <td><?= $r['alamat_pemasangan']; ?></td>
 
