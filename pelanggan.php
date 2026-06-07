@@ -55,7 +55,7 @@ $total_pending = mysqli_num_rows(
 $total_pemasangan = mysqli_num_rows(
     mysqli_query($koneksi,
     "SELECT * FROM pemasangan
-    WHERE status_pemasangan='selesai'")
+    WHERE status_pemasangan='terpasang'")
 );
 
 /* ======================================
@@ -143,7 +143,7 @@ $total_monitoring = mysqli_num_rows(
 
         <div class="logout">
             <i class="fa-solid fa-right-from-bracket"></i>
-            Logout
+            <a href="logout.php">Logout</a>
         </div>
 
     </div>
@@ -185,7 +185,7 @@ $total_monitoring = mysqli_num_rows(
 
     <div class="profile">
 
-        <img src="https://i.pravatar.cc/40" alt="">
+        <!-- <img src="https://i.pravatar.cc/40" alt=""> -->
 
     </div>
 
@@ -257,7 +257,7 @@ $total_monitoring = mysqli_num_rows(
 
                 <div>
 
-                    <h3>Pemasangan</h3>
+                    <h3>Terpasang</h3>
 
                     <h2><?= $total_pemasangan; ?></h2>
 
