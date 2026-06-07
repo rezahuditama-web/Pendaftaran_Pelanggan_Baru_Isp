@@ -177,7 +177,8 @@ while($r = mysqli_fetch_assoc($query)) $rows[] = $r;
             <li><i class="fa-solid fa-gear"></i><a href="setting_admin.php">Pengaturan</a></li>
         </ul>
         <div class="logout">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
+            <i class="fa-solid fa-right-from-bracket"></i> 
+            <a href="logout.php">Logout</a>
         </div>
     </div>
 
@@ -219,9 +220,9 @@ while($r = mysqli_fetch_assoc($query)) $rows[] = $r;
                 <div class="icon"><i class="fa-solid fa-hammer"></i></div>
                 <div><h3>Terpasang</h3><h2><?= $total_terpasang ?></h2></div>
             </div>
-            <div class="card">
+                <div class="card">
                 <div class="icon"><i class="fa-solid fa-envelope"></i></div>
-                <div><h3>Pesan Masuk</h3><h2><?= $total_pesan ?></h2></div>
+                <div><h3>Gangguan</h3><h2><?= $total_gangguan ?></h2></div>
             </div>
         </div>
 
